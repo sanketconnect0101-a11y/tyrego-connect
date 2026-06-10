@@ -21,6 +21,7 @@ import { Route as OnboardingStaffRouteImport } from './routes/onboarding.staff'
 import { Route as OnboardingShopRouteImport } from './routes/onboarding.shop'
 import { Route as OnboardingServicesRouteImport } from './routes/onboarding.services'
 import { Route as JobIdRouteImport } from './routes/job.$id'
+import { Route as JobIdIndexRouteImport } from './routes/job.$id.index'
 import { Route as JobIdProgressRouteImport } from './routes/job.$id.progress'
 import { Route as JobIdPaymentRouteImport } from './routes/job.$id.payment'
 import { Route as JobIdNavigateRouteImport } from './routes/job.$id.navigate'
@@ -86,6 +87,11 @@ const JobIdRoute = JobIdRouteImport.update({
   path: '/job/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const JobIdIndexRoute = JobIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JobIdRoute,
+} as any)
 const JobIdProgressRoute = JobIdProgressRouteImport.update({
   id: '/progress',
   path: '/progress',
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/job/$id/navigate': typeof JobIdNavigateRoute
   '/job/$id/payment': typeof JobIdPaymentRoute
   '/job/$id/progress': typeof JobIdProgressRoute
+  '/job/$id/': typeof JobIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,7 +140,6 @@ export interface FileRoutesByTo {
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
-  '/job/$id': typeof JobIdRouteWithChildren
   '/onboarding/services': typeof OnboardingServicesRoute
   '/onboarding/shop': typeof OnboardingShopRoute
   '/onboarding/staff': typeof OnboardingStaffRoute
@@ -142,6 +148,7 @@ export interface FileRoutesByTo {
   '/job/$id/navigate': typeof JobIdNavigateRoute
   '/job/$id/payment': typeof JobIdPaymentRoute
   '/job/$id/progress': typeof JobIdProgressRoute
+  '/job/$id': typeof JobIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +168,7 @@ export interface FileRoutesById {
   '/job/$id/navigate': typeof JobIdNavigateRoute
   '/job/$id/payment': typeof JobIdPaymentRoute
   '/job/$id/progress': typeof JobIdProgressRoute
+  '/job/$id/': typeof JobIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,6 +189,7 @@ export interface FileRouteTypes {
     | '/job/$id/navigate'
     | '/job/$id/payment'
     | '/job/$id/progress'
+    | '/job/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -190,7 +199,6 @@ export interface FileRouteTypes {
     | '/otp'
     | '/profile'
     | '/staff'
-    | '/job/$id'
     | '/onboarding/services'
     | '/onboarding/shop'
     | '/onboarding/staff'
@@ -199,6 +207,7 @@ export interface FileRouteTypes {
     | '/job/$id/navigate'
     | '/job/$id/payment'
     | '/job/$id/progress'
+    | '/job/$id'
   id:
     | '__root__'
     | '/'
@@ -217,6 +226,7 @@ export interface FileRouteTypes {
     | '/job/$id/navigate'
     | '/job/$id/payment'
     | '/job/$id/progress'
+    | '/job/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -320,6 +330,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof JobIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/job/$id/': {
+      id: '/job/$id/'
+      path: '/'
+      fullPath: '/job/$id/'
+      preLoaderRoute: typeof JobIdIndexRouteImport
+      parentRoute: typeof JobIdRoute
+    }
     '/job/$id/progress': {
       id: '/job/$id/progress'
       path: '/progress'
@@ -356,6 +373,7 @@ interface JobIdRouteChildren {
   JobIdNavigateRoute: typeof JobIdNavigateRoute
   JobIdPaymentRoute: typeof JobIdPaymentRoute
   JobIdProgressRoute: typeof JobIdProgressRoute
+  JobIdIndexRoute: typeof JobIdIndexRoute
 }
 
 const JobIdRouteChildren: JobIdRouteChildren = {
@@ -363,6 +381,7 @@ const JobIdRouteChildren: JobIdRouteChildren = {
   JobIdNavigateRoute: JobIdNavigateRoute,
   JobIdPaymentRoute: JobIdPaymentRoute,
   JobIdProgressRoute: JobIdProgressRoute,
+  JobIdIndexRoute: JobIdIndexRoute,
 }
 
 const JobIdRouteWithChildren = JobIdRoute._addFileChildren(JobIdRouteChildren)
