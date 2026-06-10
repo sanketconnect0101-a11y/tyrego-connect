@@ -20,6 +20,7 @@ import { Route as OnboardingVehiclesRouteImport } from './routes/onboarding.vehi
 import { Route as OnboardingStaffRouteImport } from './routes/onboarding.staff'
 import { Route as OnboardingShopRouteImport } from './routes/onboarding.shop'
 import { Route as OnboardingServicesRouteImport } from './routes/onboarding.services'
+import { Route as JobIdRouteImport } from './routes/job.$id'
 import { Route as JobIdIndexRouteImport } from './routes/job.$id.index'
 import { Route as JobIdProgressRouteImport } from './routes/job.$id.progress'
 import { Route as JobIdPaymentRouteImport } from './routes/job.$id.payment'
@@ -81,10 +82,15 @@ const OnboardingServicesRoute = OnboardingServicesRouteImport.update({
   path: '/onboarding/services',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JobIdIndexRoute = JobIdIndexRouteImport.update({
-  id: '/job/$id/',
-  path: '/job/$id/',
+const JobIdRoute = JobIdRouteImport.update({
+  id: '/job/$id',
+  path: '/job/$id',
   getParentRoute: () => rootRouteImport,
+} as any)
+const JobIdIndexRoute = JobIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => JobIdRoute,
 } as any)
 const JobIdProgressRoute = JobIdProgressRouteImport.update({
   id: '/progress',
@@ -92,9 +98,9 @@ const JobIdProgressRoute = JobIdProgressRouteImport.update({
   getParentRoute: () => JobIdRoute,
 } as any)
 const JobIdPaymentRoute = JobIdPaymentRouteImport.update({
-  id: '/job/$id/payment',
-  path: '/job/$id/payment',
-  getParentRoute: () => rootRouteImport,
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => JobIdRoute,
 } as any)
 const JobIdNavigateRoute = JobIdNavigateRouteImport.update({
   id: '/navigate',
@@ -115,6 +121,7 @@ export interface FileRoutesByFullPath {
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
+  '/job/$id': typeof JobIdRouteWithChildren
   '/onboarding/services': typeof OnboardingServicesRoute
   '/onboarding/shop': typeof OnboardingShopRoute
   '/onboarding/staff': typeof OnboardingStaffRoute
@@ -152,6 +159,7 @@ export interface FileRoutesById {
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
+  '/job/$id': typeof JobIdRouteWithChildren
   '/onboarding/services': typeof OnboardingServicesRoute
   '/onboarding/shop': typeof OnboardingShopRoute
   '/onboarding/staff': typeof OnboardingStaffRoute
@@ -172,6 +180,7 @@ export interface FileRouteTypes {
     | '/otp'
     | '/profile'
     | '/staff'
+    | '/job/$id'
     | '/onboarding/services'
     | '/onboarding/shop'
     | '/onboarding/staff'
@@ -208,6 +217,7 @@ export interface FileRouteTypes {
     | '/otp'
     | '/profile'
     | '/staff'
+    | '/job/$id'
     | '/onboarding/services'
     | '/onboarding/shop'
     | '/onboarding/staff'
@@ -227,12 +237,11 @@ export interface RootRouteChildren {
   OtpRoute: typeof OtpRoute
   ProfileRoute: typeof ProfileRoute
   StaffRoute: typeof StaffRoute
+  JobIdRoute: typeof JobIdRouteWithChildren
   OnboardingServicesRoute: typeof OnboardingServicesRoute
   OnboardingShopRoute: typeof OnboardingShopRoute
   OnboardingStaffRoute: typeof OnboardingStaffRoute
   OnboardingVehiclesRoute: typeof OnboardingVehiclesRoute
-  JobIdPaymentRoute: typeof JobIdPaymentRoute
-  JobIdIndexRoute: typeof JobIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -314,12 +323,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/job/$id': {
+      id: '/job/$id'
+      path: '/job/$id'
+      fullPath: '/job/$id'
+      preLoaderRoute: typeof JobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/job/$id/': {
       id: '/job/$id/'
-      path: '/job/$id'
+      path: '/'
       fullPath: '/job/$id/'
       preLoaderRoute: typeof JobIdIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof JobIdRoute
     }
     '/job/$id/progress': {
       id: '/job/$id/progress'
@@ -330,10 +346,10 @@ declare module '@tanstack/react-router' {
     }
     '/job/$id/payment': {
       id: '/job/$id/payment'
-      path: '/job/$id/payment'
+      path: '/payment'
       fullPath: '/job/$id/payment'
       preLoaderRoute: typeof JobIdPaymentRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof JobIdRoute
     }
     '/job/$id/navigate': {
       id: '/job/$id/navigate'
@@ -352,6 +368,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface JobIdRouteChildren {
+  JobIdDoneRoute: typeof JobIdDoneRoute
+  JobIdNavigateRoute: typeof JobIdNavigateRoute
+  JobIdPaymentRoute: typeof JobIdPaymentRoute
+  JobIdProgressRoute: typeof JobIdProgressRoute
+  JobIdIndexRoute: typeof JobIdIndexRoute
+}
+
+const JobIdRouteChildren: JobIdRouteChildren = {
+  JobIdDoneRoute: JobIdDoneRoute,
+  JobIdNavigateRoute: JobIdNavigateRoute,
+  JobIdPaymentRoute: JobIdPaymentRoute,
+  JobIdProgressRoute: JobIdProgressRoute,
+  JobIdIndexRoute: JobIdIndexRoute,
+}
+
+const JobIdRouteWithChildren = JobIdRoute._addFileChildren(JobIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
@@ -360,12 +394,11 @@ const rootRouteChildren: RootRouteChildren = {
   OtpRoute: OtpRoute,
   ProfileRoute: ProfileRoute,
   StaffRoute: StaffRoute,
+  JobIdRoute: JobIdRouteWithChildren,
   OnboardingServicesRoute: OnboardingServicesRoute,
   OnboardingShopRoute: OnboardingShopRoute,
   OnboardingStaffRoute: OnboardingStaffRoute,
   OnboardingVehiclesRoute: OnboardingVehiclesRoute,
-  JobIdPaymentRoute: JobIdPaymentRoute,
-  JobIdIndexRoute: JobIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
