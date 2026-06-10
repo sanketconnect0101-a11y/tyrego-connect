@@ -20,7 +20,7 @@ import { Route as OnboardingVehiclesRouteImport } from './routes/onboarding.vehi
 import { Route as OnboardingStaffRouteImport } from './routes/onboarding.staff'
 import { Route as OnboardingShopRouteImport } from './routes/onboarding.shop'
 import { Route as OnboardingServicesRouteImport } from './routes/onboarding.services'
-import { Route as JobIdRouteImport } from './routes/job.$id'
+import { Route as JobIdIndexRouteImport } from './routes/job.$id.index'
 import { Route as JobIdProgressRouteImport } from './routes/job.$id.progress'
 import { Route as JobIdPaymentRouteImport } from './routes/job.$id.payment'
 import { Route as JobIdNavigateRouteImport } from './routes/job.$id.navigate'
@@ -81,9 +81,9 @@ const OnboardingServicesRoute = OnboardingServicesRouteImport.update({
   path: '/onboarding/services',
   getParentRoute: () => rootRouteImport,
 } as any)
-const JobIdRoute = JobIdRouteImport.update({
-  id: '/job/$id',
-  path: '/job/$id',
+const JobIdIndexRoute = JobIdIndexRouteImport.update({
+  id: '/job/$id/',
+  path: '/job/$id/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const JobIdProgressRoute = JobIdProgressRouteImport.update({
@@ -92,9 +92,9 @@ const JobIdProgressRoute = JobIdProgressRouteImport.update({
   getParentRoute: () => JobIdRoute,
 } as any)
 const JobIdPaymentRoute = JobIdPaymentRouteImport.update({
-  id: '/payment',
-  path: '/payment',
-  getParentRoute: () => JobIdRoute,
+  id: '/job/$id/payment',
+  path: '/job/$id/payment',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const JobIdNavigateRoute = JobIdNavigateRouteImport.update({
   id: '/navigate',
@@ -115,7 +115,6 @@ export interface FileRoutesByFullPath {
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
-  '/job/$id': typeof JobIdRouteWithChildren
   '/onboarding/services': typeof OnboardingServicesRoute
   '/onboarding/shop': typeof OnboardingShopRoute
   '/onboarding/staff': typeof OnboardingStaffRoute
@@ -124,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/job/$id/navigate': typeof JobIdNavigateRoute
   '/job/$id/payment': typeof JobIdPaymentRoute
   '/job/$id/progress': typeof JobIdProgressRoute
+  '/job/$id/': typeof JobIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -133,7 +133,6 @@ export interface FileRoutesByTo {
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
-  '/job/$id': typeof JobIdRouteWithChildren
   '/onboarding/services': typeof OnboardingServicesRoute
   '/onboarding/shop': typeof OnboardingShopRoute
   '/onboarding/staff': typeof OnboardingStaffRoute
@@ -142,6 +141,7 @@ export interface FileRoutesByTo {
   '/job/$id/navigate': typeof JobIdNavigateRoute
   '/job/$id/payment': typeof JobIdPaymentRoute
   '/job/$id/progress': typeof JobIdProgressRoute
+  '/job/$id': typeof JobIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,7 +152,6 @@ export interface FileRoutesById {
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
-  '/job/$id': typeof JobIdRouteWithChildren
   '/onboarding/services': typeof OnboardingServicesRoute
   '/onboarding/shop': typeof OnboardingShopRoute
   '/onboarding/staff': typeof OnboardingStaffRoute
@@ -161,6 +160,7 @@ export interface FileRoutesById {
   '/job/$id/navigate': typeof JobIdNavigateRoute
   '/job/$id/payment': typeof JobIdPaymentRoute
   '/job/$id/progress': typeof JobIdProgressRoute
+  '/job/$id/': typeof JobIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -172,7 +172,6 @@ export interface FileRouteTypes {
     | '/otp'
     | '/profile'
     | '/staff'
-    | '/job/$id'
     | '/onboarding/services'
     | '/onboarding/shop'
     | '/onboarding/staff'
@@ -181,6 +180,7 @@ export interface FileRouteTypes {
     | '/job/$id/navigate'
     | '/job/$id/payment'
     | '/job/$id/progress'
+    | '/job/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -190,7 +190,6 @@ export interface FileRouteTypes {
     | '/otp'
     | '/profile'
     | '/staff'
-    | '/job/$id'
     | '/onboarding/services'
     | '/onboarding/shop'
     | '/onboarding/staff'
@@ -199,6 +198,7 @@ export interface FileRouteTypes {
     | '/job/$id/navigate'
     | '/job/$id/payment'
     | '/job/$id/progress'
+    | '/job/$id'
   id:
     | '__root__'
     | '/'
@@ -208,7 +208,6 @@ export interface FileRouteTypes {
     | '/otp'
     | '/profile'
     | '/staff'
-    | '/job/$id'
     | '/onboarding/services'
     | '/onboarding/shop'
     | '/onboarding/staff'
@@ -217,6 +216,7 @@ export interface FileRouteTypes {
     | '/job/$id/navigate'
     | '/job/$id/payment'
     | '/job/$id/progress'
+    | '/job/$id/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -227,11 +227,12 @@ export interface RootRouteChildren {
   OtpRoute: typeof OtpRoute
   ProfileRoute: typeof ProfileRoute
   StaffRoute: typeof StaffRoute
-  JobIdRoute: typeof JobIdRouteWithChildren
   OnboardingServicesRoute: typeof OnboardingServicesRoute
   OnboardingShopRoute: typeof OnboardingShopRoute
   OnboardingStaffRoute: typeof OnboardingStaffRoute
   OnboardingVehiclesRoute: typeof OnboardingVehiclesRoute
+  JobIdPaymentRoute: typeof JobIdPaymentRoute
+  JobIdIndexRoute: typeof JobIdIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -313,11 +314,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/job/$id': {
-      id: '/job/$id'
+    '/job/$id/': {
+      id: '/job/$id/'
       path: '/job/$id'
-      fullPath: '/job/$id'
-      preLoaderRoute: typeof JobIdRouteImport
+      fullPath: '/job/$id/'
+      preLoaderRoute: typeof JobIdIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/job/$id/progress': {
@@ -329,10 +330,10 @@ declare module '@tanstack/react-router' {
     }
     '/job/$id/payment': {
       id: '/job/$id/payment'
-      path: '/payment'
+      path: '/job/$id/payment'
       fullPath: '/job/$id/payment'
       preLoaderRoute: typeof JobIdPaymentRouteImport
-      parentRoute: typeof JobIdRoute
+      parentRoute: typeof rootRouteImport
     }
     '/job/$id/navigate': {
       id: '/job/$id/navigate'
@@ -351,22 +352,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface JobIdRouteChildren {
-  JobIdDoneRoute: typeof JobIdDoneRoute
-  JobIdNavigateRoute: typeof JobIdNavigateRoute
-  JobIdPaymentRoute: typeof JobIdPaymentRoute
-  JobIdProgressRoute: typeof JobIdProgressRoute
-}
-
-const JobIdRouteChildren: JobIdRouteChildren = {
-  JobIdDoneRoute: JobIdDoneRoute,
-  JobIdNavigateRoute: JobIdNavigateRoute,
-  JobIdPaymentRoute: JobIdPaymentRoute,
-  JobIdProgressRoute: JobIdProgressRoute,
-}
-
-const JobIdRouteWithChildren = JobIdRoute._addFileChildren(JobIdRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HomeRoute: HomeRoute,
@@ -375,12 +360,23 @@ const rootRouteChildren: RootRouteChildren = {
   OtpRoute: OtpRoute,
   ProfileRoute: ProfileRoute,
   StaffRoute: StaffRoute,
-  JobIdRoute: JobIdRouteWithChildren,
   OnboardingServicesRoute: OnboardingServicesRoute,
   OnboardingShopRoute: OnboardingShopRoute,
   OnboardingStaffRoute: OnboardingStaffRoute,
   OnboardingVehiclesRoute: OnboardingVehiclesRoute,
+  JobIdPaymentRoute: JobIdPaymentRoute,
+  JobIdIndexRoute: JobIdIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

@@ -4,7 +4,7 @@ import { ScreenHeader } from "@/components/MobileShell";
 import { staffList, incomingLeads, recentJobs } from "@/lib/mock-data";
 import { MapPin, Phone, Clock, Navigation, IndianRupee, Check } from "lucide-react";
 
-export const Route = createFileRoute("/job/$id")({ component: JobDetail });
+export const Route = createFileRoute("/job/$id/")({ component: JobDetail });
 
 function JobDetail() {
   const { id } = Route.useParams();
