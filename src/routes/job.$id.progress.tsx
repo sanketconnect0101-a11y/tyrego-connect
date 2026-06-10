@@ -78,7 +78,7 @@ function Progress() {
       <div className="flex-1" />
       <div className="sticky bottom-0 border-t border-border bg-card/95 p-5 backdrop-blur safe-bottom">
         <Link to="/job/$id/payment" params={{ id }} className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated">
-          Complete Job →
+          End Job → Collect Payment
         </Link>
       </div>
     </div>
