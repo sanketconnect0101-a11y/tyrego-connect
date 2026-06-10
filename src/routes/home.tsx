@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { Bell, MapPin, Clock, IndianRupee, ChevronRight, Briefcase, Users, TrendingUp } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bell, ChevronRight, Briefcase, Users, TrendingUp, Radio, Zap } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
 import { LeadSheet } from "@/components/LeadSheet";
 import { incomingLeads, recentJobs } from "@/lib/mock-data";
@@ -10,8 +10,26 @@ export const Route = createFileRoute("/home")({ component: Home });
 function Home() {
   const [online, setOnline] = useState(true);
   const [activeLead, setActiveLead] = useState<string | null>(null);
+  const indexRef = useRef(0);
   const lead = incomingLeads.find((l) => l.id === activeLead);
   const activeJobs = recentJobs.filter((j) => j.status === "active");
+
+  // Auto-trigger a lead popup when online (Porter-style)
+  useEffect(() => {
+    if (!online || activeLead) return;
+    const t = setTimeout(() => {
+      const next = incomingLeads[indexRef.current % incomingLeads.length];
+      indexRef.current += 1;
+      setActiveLead(next.id);
+    }, 5000);
+    return () => clearTimeout(t);
+  }, [online, activeLead]);
+
+  const triggerNow = () => {
+    const next = incomingLeads[indexRef.current % incomingLeads.length];
+    indexRef.current += 1;
+    setActiveLead(next.id);
+  };
 
   return (
     <MobileShell>
@@ -27,7 +45,6 @@ function Home() {
             <div className="absolute right-2 top-2 h-2 w-2 rounded-full bg-warning" />
           </button>
         </div>
-        {/* Online toggle */}
         <button
           onClick={() => setOnline(!online)}
           className={`mt-5 flex w-full items-center justify-between rounded-2xl p-3 transition ${online ? "bg-white/15" : "bg-foreground/30"} backdrop-blur`}
@@ -69,42 +86,31 @@ function Home() {
         </div>
       </div>
 
-      {/* Incoming Leads */}
+      {/* Waiting for leads / Empty state */}
       <section className="px-5 pt-6">
-        <div className="mb-3 flex items-center justify-between">
-          <h2 className="text-base font-extrabold">Incoming Leads</h2>
-          <span className="rounded-full bg-destructive/10 px-2.5 py-0.5 text-[11px] font-bold text-destructive">
-            {incomingLeads.length} New
-          </span>
-        </div>
-        <div className="space-y-3">
-          {incomingLeads.map((l) => (
-            <button
-              key={l.id}
-              onClick={() => setActiveLead(l.id)}
-              className="w-full rounded-2xl border border-border bg-card p-4 text-left shadow-card transition active:scale-[0.99]"
-            >
-              <div className="flex items-start gap-3">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary-soft text-3xl">{l.vehicleIcon}</div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wide text-primary">{l.vehicle}</span>
-                    {l.priority === "high" && <span className="rounded-full bg-warning/20 px-2 py-0.5 text-[10px] font-bold uppercase text-warning-foreground">Urgent</span>}
-                  </div>
-                  <div className="mt-0.5 truncate text-sm font-bold">{l.problem}</div>
-                  <div className="mt-1.5 flex items-center gap-3 text-[11px] text-muted-foreground">
-                    <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{l.distanceKm} km</span>
-                    <span className="flex items-center gap-1"><Clock className="h-3 w-3" />{l.etaMin} min</span>
-                    <span className="ml-auto flex items-center gap-0.5 font-bold text-foreground"><IndianRupee className="h-3 w-3" />{l.amount}</span>
-                  </div>
+        <div className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 text-center shadow-card">
+          {online ? (
+            <>
+              <div className="relative mx-auto flex h-24 w-24 items-center justify-center">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary/30" />
+                <span className="absolute inline-flex h-16 w-16 rounded-full bg-primary/20" />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-primary text-primary-foreground shadow-elevated">
+                  <Radio className="h-6 w-6" />
                 </div>
               </div>
-              <div className="mt-3 flex gap-2">
-                <div className="flex-1 rounded-xl border border-border py-2 text-center text-xs font-semibold text-muted-foreground">Ignore</div>
-                <div className="flex-[2] rounded-xl bg-gradient-primary py-2 text-center text-xs font-bold text-primary-foreground">View Lead →</div>
-              </div>
-            </button>
-          ))}
+              <h3 className="mt-4 text-base font-extrabold">Waiting for new leads…</h3>
+              <p className="mt-1 text-xs text-muted-foreground">A popup will appear instantly when a customer requests service nearby.</p>
+              <button onClick={triggerNow} className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary-soft px-4 py-2 text-xs font-bold text-primary">
+                <Zap className="h-3.5 w-3.5" /> Simulate Lead Now
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-secondary text-3xl">😴</div>
+              <h3 className="mt-3 text-base font-extrabold">You're Offline</h3>
+              <p className="mt-1 text-xs text-muted-foreground">Go online to start receiving customer leads.</p>
+            </>
+          )}
         </div>
       </section>
 
