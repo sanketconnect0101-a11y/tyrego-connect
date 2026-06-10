@@ -9,38 +9,275 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StaffRouteImport } from './routes/staff'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as OtpRouteImport } from './routes/otp'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as JobsRouteImport } from './routes/jobs'
+import { Route as HomeRouteImport } from './routes/home'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as OnboardingVehiclesRouteImport } from './routes/onboarding.vehicles'
+import { Route as OnboardingStaffRouteImport } from './routes/onboarding.staff'
+import { Route as OnboardingShopRouteImport } from './routes/onboarding.shop'
+import { Route as OnboardingServicesRouteImport } from './routes/onboarding.services'
+import { Route as JobIdRouteImport } from './routes/job.$id'
+import { Route as JobIdProgressRouteImport } from './routes/job.$id.progress'
+import { Route as JobIdPaymentRouteImport } from './routes/job.$id.payment'
+import { Route as JobIdNavigateRouteImport } from './routes/job.$id.navigate'
+import { Route as JobIdDoneRouteImport } from './routes/job.$id.done'
 
+const StaffRoute = StaffRouteImport.update({
+  id: '/staff',
+  path: '/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OtpRoute = OtpRouteImport.update({
+  id: '/otp',
+  path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobsRoute = JobsRouteImport.update({
+  id: '/jobs',
+  path: '/jobs',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const OnboardingVehiclesRoute = OnboardingVehiclesRouteImport.update({
+  id: '/onboarding/vehicles',
+  path: '/onboarding/vehicles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingStaffRoute = OnboardingStaffRouteImport.update({
+  id: '/onboarding/staff',
+  path: '/onboarding/staff',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingShopRoute = OnboardingShopRouteImport.update({
+  id: '/onboarding/shop',
+  path: '/onboarding/shop',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingServicesRoute = OnboardingServicesRouteImport.update({
+  id: '/onboarding/services',
+  path: '/onboarding/services',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobIdRoute = JobIdRouteImport.update({
+  id: '/job/$id',
+  path: '/job/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const JobIdProgressRoute = JobIdProgressRouteImport.update({
+  id: '/progress',
+  path: '/progress',
+  getParentRoute: () => JobIdRoute,
+} as any)
+const JobIdPaymentRoute = JobIdPaymentRouteImport.update({
+  id: '/payment',
+  path: '/payment',
+  getParentRoute: () => JobIdRoute,
+} as any)
+const JobIdNavigateRoute = JobIdNavigateRouteImport.update({
+  id: '/navigate',
+  path: '/navigate',
+  getParentRoute: () => JobIdRoute,
+} as any)
+const JobIdDoneRoute = JobIdDoneRouteImport.update({
+  id: '/done',
+  path: '/done',
+  getParentRoute: () => JobIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/home': typeof HomeRoute
+  '/jobs': typeof JobsRoute
+  '/login': typeof LoginRoute
+  '/otp': typeof OtpRoute
+  '/profile': typeof ProfileRoute
+  '/staff': typeof StaffRoute
+  '/job/$id': typeof JobIdRouteWithChildren
+  '/onboarding/services': typeof OnboardingServicesRoute
+  '/onboarding/shop': typeof OnboardingShopRoute
+  '/onboarding/staff': typeof OnboardingStaffRoute
+  '/onboarding/vehicles': typeof OnboardingVehiclesRoute
+  '/job/$id/done': typeof JobIdDoneRoute
+  '/job/$id/navigate': typeof JobIdNavigateRoute
+  '/job/$id/payment': typeof JobIdPaymentRoute
+  '/job/$id/progress': typeof JobIdProgressRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/home': typeof HomeRoute
+  '/jobs': typeof JobsRoute
+  '/login': typeof LoginRoute
+  '/otp': typeof OtpRoute
+  '/profile': typeof ProfileRoute
+  '/staff': typeof StaffRoute
+  '/job/$id': typeof JobIdRouteWithChildren
+  '/onboarding/services': typeof OnboardingServicesRoute
+  '/onboarding/shop': typeof OnboardingShopRoute
+  '/onboarding/staff': typeof OnboardingStaffRoute
+  '/onboarding/vehicles': typeof OnboardingVehiclesRoute
+  '/job/$id/done': typeof JobIdDoneRoute
+  '/job/$id/navigate': typeof JobIdNavigateRoute
+  '/job/$id/payment': typeof JobIdPaymentRoute
+  '/job/$id/progress': typeof JobIdProgressRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/home': typeof HomeRoute
+  '/jobs': typeof JobsRoute
+  '/login': typeof LoginRoute
+  '/otp': typeof OtpRoute
+  '/profile': typeof ProfileRoute
+  '/staff': typeof StaffRoute
+  '/job/$id': typeof JobIdRouteWithChildren
+  '/onboarding/services': typeof OnboardingServicesRoute
+  '/onboarding/shop': typeof OnboardingShopRoute
+  '/onboarding/staff': typeof OnboardingStaffRoute
+  '/onboarding/vehicles': typeof OnboardingVehiclesRoute
+  '/job/$id/done': typeof JobIdDoneRoute
+  '/job/$id/navigate': typeof JobIdNavigateRoute
+  '/job/$id/payment': typeof JobIdPaymentRoute
+  '/job/$id/progress': typeof JobIdProgressRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/home'
+    | '/jobs'
+    | '/login'
+    | '/otp'
+    | '/profile'
+    | '/staff'
+    | '/job/$id'
+    | '/onboarding/services'
+    | '/onboarding/shop'
+    | '/onboarding/staff'
+    | '/onboarding/vehicles'
+    | '/job/$id/done'
+    | '/job/$id/navigate'
+    | '/job/$id/payment'
+    | '/job/$id/progress'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/home'
+    | '/jobs'
+    | '/login'
+    | '/otp'
+    | '/profile'
+    | '/staff'
+    | '/job/$id'
+    | '/onboarding/services'
+    | '/onboarding/shop'
+    | '/onboarding/staff'
+    | '/onboarding/vehicles'
+    | '/job/$id/done'
+    | '/job/$id/navigate'
+    | '/job/$id/payment'
+    | '/job/$id/progress'
+  id:
+    | '__root__'
+    | '/'
+    | '/home'
+    | '/jobs'
+    | '/login'
+    | '/otp'
+    | '/profile'
+    | '/staff'
+    | '/job/$id'
+    | '/onboarding/services'
+    | '/onboarding/shop'
+    | '/onboarding/staff'
+    | '/onboarding/vehicles'
+    | '/job/$id/done'
+    | '/job/$id/navigate'
+    | '/job/$id/payment'
+    | '/job/$id/progress'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  HomeRoute: typeof HomeRoute
+  JobsRoute: typeof JobsRoute
+  LoginRoute: typeof LoginRoute
+  OtpRoute: typeof OtpRoute
+  ProfileRoute: typeof ProfileRoute
+  StaffRoute: typeof StaffRoute
+  JobIdRoute: typeof JobIdRouteWithChildren
+  OnboardingServicesRoute: typeof OnboardingServicesRoute
+  OnboardingShopRoute: typeof OnboardingShopRoute
+  OnboardingStaffRoute: typeof OnboardingStaffRoute
+  OnboardingVehiclesRoute: typeof OnboardingVehiclesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/staff': {
+      id: '/staff'
+      path: '/staff'
+      fullPath: '/staff'
+      preLoaderRoute: typeof StaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/otp': {
+      id: '/otp'
+      path: '/otp'
+      fullPath: '/otp'
+      preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/jobs': {
+      id: '/jobs'
+      path: '/jobs'
+      fullPath: '/jobs'
+      preLoaderRoute: typeof JobsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +285,102 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/onboarding/vehicles': {
+      id: '/onboarding/vehicles'
+      path: '/onboarding/vehicles'
+      fullPath: '/onboarding/vehicles'
+      preLoaderRoute: typeof OnboardingVehiclesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/staff': {
+      id: '/onboarding/staff'
+      path: '/onboarding/staff'
+      fullPath: '/onboarding/staff'
+      preLoaderRoute: typeof OnboardingStaffRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/shop': {
+      id: '/onboarding/shop'
+      path: '/onboarding/shop'
+      fullPath: '/onboarding/shop'
+      preLoaderRoute: typeof OnboardingShopRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding/services': {
+      id: '/onboarding/services'
+      path: '/onboarding/services'
+      fullPath: '/onboarding/services'
+      preLoaderRoute: typeof OnboardingServicesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job/$id': {
+      id: '/job/$id'
+      path: '/job/$id'
+      fullPath: '/job/$id'
+      preLoaderRoute: typeof JobIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/job/$id/progress': {
+      id: '/job/$id/progress'
+      path: '/progress'
+      fullPath: '/job/$id/progress'
+      preLoaderRoute: typeof JobIdProgressRouteImport
+      parentRoute: typeof JobIdRoute
+    }
+    '/job/$id/payment': {
+      id: '/job/$id/payment'
+      path: '/payment'
+      fullPath: '/job/$id/payment'
+      preLoaderRoute: typeof JobIdPaymentRouteImport
+      parentRoute: typeof JobIdRoute
+    }
+    '/job/$id/navigate': {
+      id: '/job/$id/navigate'
+      path: '/navigate'
+      fullPath: '/job/$id/navigate'
+      preLoaderRoute: typeof JobIdNavigateRouteImport
+      parentRoute: typeof JobIdRoute
+    }
+    '/job/$id/done': {
+      id: '/job/$id/done'
+      path: '/done'
+      fullPath: '/job/$id/done'
+      preLoaderRoute: typeof JobIdDoneRouteImport
+      parentRoute: typeof JobIdRoute
+    }
   }
 }
 
+interface JobIdRouteChildren {
+  JobIdDoneRoute: typeof JobIdDoneRoute
+  JobIdNavigateRoute: typeof JobIdNavigateRoute
+  JobIdPaymentRoute: typeof JobIdPaymentRoute
+  JobIdProgressRoute: typeof JobIdProgressRoute
+}
+
+const JobIdRouteChildren: JobIdRouteChildren = {
+  JobIdDoneRoute: JobIdDoneRoute,
+  JobIdNavigateRoute: JobIdNavigateRoute,
+  JobIdPaymentRoute: JobIdPaymentRoute,
+  JobIdProgressRoute: JobIdProgressRoute,
+}
+
+const JobIdRouteWithChildren = JobIdRoute._addFileChildren(JobIdRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  HomeRoute: HomeRoute,
+  JobsRoute: JobsRoute,
+  LoginRoute: LoginRoute,
+  OtpRoute: OtpRoute,
+  ProfileRoute: ProfileRoute,
+  StaffRoute: StaffRoute,
+  JobIdRoute: JobIdRouteWithChildren,
+  OnboardingServicesRoute: OnboardingServicesRoute,
+  OnboardingShopRoute: OnboardingShopRoute,
+  OnboardingStaffRoute: OnboardingStaffRoute,
+  OnboardingVehiclesRoute: OnboardingVehiclesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
