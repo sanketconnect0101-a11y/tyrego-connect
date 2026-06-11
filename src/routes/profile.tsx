@@ -11,7 +11,7 @@ function Profile() {
         <div className="flex items-center gap-4">
           <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white/20 text-3xl backdrop-blur">🏪</div>
           <div className="min-w-0 flex-1">
-            <div className="text-xl font-extrabold">Sharma Tyre Works</div>
+            <div className="text-xl font-extrabold">Sharma Auto Works</div>
             <div className="text-sm text-white/80">Rakesh Sharma • Owner</div>
             <div className="mt-1 flex items-center gap-1 text-xs">
               <Star className="h-3.5 w-3.5 fill-warning text-warning" />
@@ -39,7 +39,7 @@ function Profile() {
         <Link to="/" className="flex w-full items-center justify-center gap-2 rounded-2xl border border-destructive/30 bg-destructive/5 py-4 font-bold text-destructive">
           <LogOut className="h-4 w-4" /> Logout
         </Link>
-        <div className="mt-4 text-center text-[11px] text-muted-foreground">TyreGo Merchant v1.0.0</div>
+        <div className="mt-4 text-center text-[11px] text-muted-foreground">AutoXpert Merchant v1.0.0</div>
       </div>
     </MobileShell>
   );

@@ -1,23 +1,35 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
-import { Check } from "lucide-react";
+import { Check, Mic, Square, Play, Pause, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/progress")({ component: Progress });
 
 const STEPS = ["Reached Customer", "Inspection", "Repairing", "Completed"];
 const SERVICES = ["Puncture Fixed", "Tyre Replaced", "Air Filled", "Wheel Changed"];
+const STATUS_OPTIONS = [
+  { id: "attended", label: "Customer attended", icon: "✅" },
+  { id: "not_available", label: "Customer not available", icon: "❌" },
+  { id: "work_done", label: "Work completed", icon: "🔧" },
+  { id: "partial", label: "Partial work done", icon: "⚠️" },
+  { id: "reschedule", label: "Reschedule needed", icon: "🔁" },
+];
 
 function Progress() {
   const { id } = Route.useParams();
   const [step, setStep] = useState(2);
   const [services, setServices] = useState<Set<string>>(new Set(["Puncture Fixed"]));
-  const [notes, setNotes] = useState("");
+  const [status, setStatus] = useState<Set<string>>(new Set(["attended"]));
 
   const toggle = (s: string) => {
     const n = new Set(services);
     n.has(s) ? n.delete(s) : n.add(s);
     setServices(n);
+  };
+  const toggleStatus = (s: string) => {
+    const n = new Set(status);
+    n.has(s) ? n.delete(s) : n.add(s);
+    setStatus(n);
   };
 
   return (
@@ -68,11 +80,31 @@ function Progress() {
           </div>
         </div>
 
-        {/* Notes */}
-        <div>
-          <label className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Notes (optional)</label>
-          <textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={3} placeholder="Any additional info for customer..." className="mt-2 w-full resize-none rounded-2xl border-2 border-border bg-card px-4 py-3 text-sm outline-none focus:border-primary" />
+        {/* Status checkboxes (replaces note) */}
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
+          <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Job Status</div>
+          <div className="mt-3 space-y-2">
+            {STATUS_OPTIONS.map((o) => {
+              const active = status.has(o.id);
+              return (
+                <button
+                  key={o.id}
+                  onClick={() => toggleStatus(o.id)}
+                  className={`flex w-full items-center gap-3 rounded-xl border-2 p-3 text-left transition ${active ? "border-primary bg-primary-soft" : "border-border bg-card"}`}
+                >
+                  <div className={`flex h-6 w-6 items-center justify-center rounded-md border-2 ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                    {active && <Check className="h-3.5 w-3.5" strokeWidth={3} />}
+                  </div>
+                  <span className="text-base">{o.icon}</span>
+                  <span className={`flex-1 text-sm font-semibold ${active ? "text-primary" : "text-foreground"}`}>{o.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
+        {/* Voice note */}
+        <VoiceNote />
       </div>
 
       <div className="flex-1" />
@@ -81,6 +113,102 @@ function Progress() {
           End Job → Collect Payment
         </Link>
       </div>
+    </div>
+  );
+}
+
+function VoiceNote() {
+  const [recording, setRecording] = useState(false);
+  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [duration, setDuration] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const mediaRef = useRef<MediaRecorder | null>(null);
+  const chunks = useRef<Blob[]>([]);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const timerRef = useRef<number | null>(null);
+
+  useEffect(() => () => {
+    if (timerRef.current) window.clearInterval(timerRef.current);
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+  }, [audioUrl]);
+
+  const start = async () => {
+    setError(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mr = new MediaRecorder(stream);
+      chunks.current = [];
+      mr.ondataavailable = (e) => { if (e.data.size > 0) chunks.current.push(e.data); };
+      mr.onstop = () => {
+        const blob = new Blob(chunks.current, { type: "audio/webm" });
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach((t) => t.stop());
+      };
+      mr.start();
+      mediaRef.current = mr;
+      setRecording(true);
+      setDuration(0);
+      timerRef.current = window.setInterval(() => setDuration((d) => d + 1), 1000);
+    } catch {
+      setError("Microphone access denied");
+    }
+  };
+
+  const stop = () => {
+    mediaRef.current?.stop();
+    setRecording(false);
+    if (timerRef.current) window.clearInterval(timerRef.current);
+  };
+
+  const togglePlay = () => {
+    if (!audioRef.current) return;
+    if (playing) { audioRef.current.pause(); setPlaying(false); }
+    else { audioRef.current.play(); setPlaying(true); }
+  };
+
+  const remove = () => {
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
+    setAudioUrl(null);
+    setDuration(0);
+    setPlaying(false);
+  };
+
+  const fmt = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
+
+  return (
+    <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
+      <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Voice Note (optional)</div>
+
+      {!audioUrl ? (
+        <div className="mt-3 flex flex-col items-center gap-3 rounded-2xl bg-primary-soft p-5">
+          <button
+            onClick={recording ? stop : start}
+            className={`relative flex h-16 w-16 items-center justify-center rounded-full text-primary-foreground shadow-elevated transition ${recording ? "bg-destructive" : "bg-gradient-primary"}`}
+          >
+            {recording && <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-destructive opacity-60" />}
+            {recording ? <Square className="relative h-6 w-6" fill="currentColor" /> : <Mic className="relative h-7 w-7" />}
+          </button>
+          <div className="text-sm font-bold">
+            {recording ? `Recording... ${fmt(duration)}` : "Tap to record voice note"}
+          </div>
+          {error && <div className="text-[11px] text-destructive">{error}</div>}
+        </div>
+      ) : (
+        <div className="mt-3 flex items-center gap-3 rounded-2xl bg-primary-soft p-4">
+          <button onClick={togglePlay} className="flex h-12 w-12 items-center justify-center rounded-full bg-gradient-primary text-primary-foreground shadow-elevated">
+            {playing ? <Pause className="h-5 w-5" fill="currentColor" /> : <Play className="h-5 w-5" fill="currentColor" />}
+          </button>
+          <div className="flex-1">
+            <div className="text-sm font-bold">Voice Note</div>
+            <div className="text-xs text-muted-foreground">{fmt(duration)} recorded</div>
+            <audio ref={audioRef} src={audioUrl} onEnded={() => setPlaying(false)} className="hidden" />
+          </div>
+          <button onClick={remove} className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/15 text-destructive">
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }

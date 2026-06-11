@@ -17,7 +17,7 @@ function Services() {
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">
       <ScreenHeader title="Services Offered" />
-      <Stepper step={3} />
+      <Stepper step={4} />
       <div className="px-5 pb-2">
         <h2 className="text-xl font-bold">What services do you offer?</h2>
         <p className="mt-1 text-sm text-muted-foreground">Customers will book these from your shop</p>
@@ -44,8 +44,8 @@ function Services() {
         })}
       </div>
       <div className="sticky bottom-0 border-t border-border bg-card/95 p-5 backdrop-blur-lg safe-bottom">
-        <Link to="/onboarding/staff" className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 text-base font-bold text-primary-foreground shadow-elevated">
-          Continue →
+        <Link to="/home" className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 text-base font-bold text-primary-foreground shadow-elevated">
+          Finish Setup →
         </Link>
       </div>
     </div>

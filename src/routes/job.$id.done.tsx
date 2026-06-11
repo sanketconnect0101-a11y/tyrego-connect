@@ -14,7 +14,7 @@ function Done() {
           </div>
         </div>
         <h1 className="mt-8 text-3xl font-extrabold">Job Completed! 🎉</h1>
-        <p className="mt-2 text-sm text-muted-foreground">Great work, Sharma Tyre Works</p>
+        <p className="mt-2 text-sm text-muted-foreground">Great work, Sharma Auto Works</p>
 
         <div className="mt-8 w-full rounded-3xl border border-border bg-card p-5 text-left shadow-card">
           <Row label="Vehicle" value="🚗 Car" />

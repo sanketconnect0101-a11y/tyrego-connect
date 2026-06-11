@@ -1,7 +1,7 @@
 {
-  "name": "TyreGo Merchant",
-  "short_name": "TyreGo",
-  "description": "Roadside Tyre Service Network — Merchant App",
+  "name": "AutoXpert Merchant",
+  "short_name": "AutoXpert",
+  "description": "AutoXpert Merchant App — Roadside Auto Service Network",
   "start_url": "/",
   "display": "standalone",
   "orientation": "portrait",
