@@ -11,13 +11,13 @@ function Splash() {
         <div className="relative mb-8">
           <div className="absolute inset-0 animate-pulse-ring rounded-full" />
           <div className="relative flex h-32 w-32 items-center justify-center rounded-full bg-white/15 backdrop-blur-lg">
-            <div className="text-7xl">🛞</div>
+            <div className="text-7xl">🔧</div>
           </div>
         </div>
-        <h1 className="text-5xl font-extrabold tracking-tight">TyreGo</h1>
-        <p className="mt-3 text-base font-medium text-white/85">Roadside Tyre Service Network</p>
+        <h1 className="text-5xl font-extrabold tracking-tight">AutoXpert</h1>
+        <p className="mt-3 text-base font-medium text-white/85">Roadside Auto Service Network</p>
         <p className="mt-2 max-w-xs text-sm text-white/65">
-          Connect with thousands of customers needing tyre service nearby
+          Connect with thousands of customers needing auto service nearby
         </p>
       </div>
       <div className="px-6 pb-10 safe-bottom">
@@ -27,7 +27,7 @@ function Splash() {
         >
           Get Started →
         </Link>
-        <p className="mt-4 text-center text-xs text-white/60">For tyre merchants & service partners</p>
+        <p className="mt-4 text-center text-xs text-white/60">For auto merchants & service partners</p>
       </div>
     </div>
   );

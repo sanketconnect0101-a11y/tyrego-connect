@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
 import { staffList, incomingLeads, recentJobs } from "@/lib/mock-data";
-import { MapPin, Phone, Clock, Navigation, IndianRupee, Check } from "lucide-react";
+import { MapPin, Phone, Clock, Navigation, IndianRupee, User } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/")({ component: JobDetail });
 
@@ -16,8 +16,19 @@ function JobDetail() {
 
   const [showAssign, setShowAssign] = useState(false);
   const [assigned, setAssigned] = useState<string | null>(null);
+  const [selfHandle, setSelfHandle] = useState(false);
+  const [hasStaff, setHasStaff] = useState(true);
+
+  useEffect(() => {
+    try {
+      const c = localStorage.getItem("autoxpert_staff_count");
+      if (c !== null) setHasStaff(parseInt(c, 10) > 0);
+    } catch {}
+  }, []);
 
   if (!data) return <div className="p-10 text-center">Job not found</div>;
+
+  const ready = assigned || selfHandle;
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">
@@ -70,12 +81,13 @@ function JobDetail() {
           </div>
         </div>
 
-        {/* Assigned staff */}
+        {/* Handle / Assign */}
         <div className="rounded-2xl border border-border bg-card p-4 shadow-card">
           <div className="flex items-center justify-between">
-            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Assigned Staff</div>
-            {assigned && <button onClick={() => setShowAssign(true)} className="text-xs font-bold text-primary">Change</button>}
+            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Job Handler</div>
+            {ready && <button onClick={() => { setAssigned(null); setSelfHandle(false); }} className="text-xs font-bold text-primary">Change</button>}
           </div>
+
           {assigned ? (
             <div className="mt-2 flex items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-primary font-bold text-primary-foreground">
@@ -83,27 +95,47 @@ function JobDetail() {
               </div>
               <div className="flex-1">
                 <div className="font-bold">{staffList.find(s => s.id === assigned)?.name}</div>
-                <div className="text-xs text-success">On the way</div>
+                <div className="text-xs text-success">Assigned • on the way</div>
               </div>
               <Clock className="h-5 w-5 text-muted-foreground" />
             </div>
+          ) : selfHandle ? (
+            <div className="mt-2 flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-primary text-primary-foreground">
+                <User className="h-5 w-5" />
+              </div>
+              <div className="flex-1">
+                <div className="font-bold">Self Handle</div>
+                <div className="text-xs text-success">You'll handle this job yourself</div>
+              </div>
+            </div>
           ) : (
-            <button onClick={() => setShowAssign(true)} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft py-3 font-bold text-primary">
-              + Assign Staff
-            </button>
+            <div className="mt-3 space-y-2">
+              {hasStaff && (
+                <button onClick={() => setShowAssign(true)} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft py-3 font-bold text-primary">
+                  + Assign to Staff
+                </button>
+              )}
+              <button onClick={() => setSelfHandle(true)} className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-border bg-card py-3 font-bold text-foreground">
+                <User className="h-4 w-4" /> Handle Yourself
+              </button>
+              {!hasStaff && (
+                <p className="text-center text-[11px] text-muted-foreground">No staff added — you'll handle this job</p>
+              )}
+            </div>
           )}
         </div>
       </div>
 
       <div className="flex-1" />
       <div className="sticky bottom-0 border-t border-border bg-card/95 p-5 backdrop-blur safe-bottom">
-        {assigned ? (
+        {ready ? (
           <Link to="/job/$id/navigate" params={{ id: data.id }} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated">
             <Navigation className="h-5 w-5" /> Start Job
           </Link>
         ) : (
-          <button onClick={() => setShowAssign(true)} className="w-full rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated">
-            Assign Staff to Continue
+          <button onClick={() => hasStaff ? setShowAssign(true) : setSelfHandle(true)} className="w-full rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated">
+            {hasStaff ? "Assign or Self Handle" : "Tap to Start Job"}
           </button>
         )}
       </div>
