@@ -61,8 +61,12 @@ function OwnerLocation() {
 
         {/* Owner photo */}
         <div>
-          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your Photo</label>
-          <label className="mt-2 flex items-center gap-4 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-4">
+          <label className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Your Selfie</label>
+          <button
+            type="button"
+            onClick={() => setShowCam(true)}
+            className="mt-2 flex w-full items-center gap-4 rounded-2xl border-2 border-dashed border-primary/40 bg-card p-4 text-left"
+          >
             <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full bg-primary-soft">
               {photo ? (
                 <img src={photo} alt="Owner" className="h-full w-full object-cover" />
@@ -73,12 +77,12 @@ function OwnerLocation() {
               )}
             </div>
             <div className="flex-1">
-              <div className="text-sm font-bold">{photo ? "Photo added ✓" : "Tap to add selfie"}</div>
-              <div className="text-[11px] text-muted-foreground">Customers will see this</div>
+              <div className="text-sm font-bold">{photo ? "Photo captured ✓ — Retake" : "Take Selfie (Open Camera)"}</div>
+              <div className="text-[11px] text-muted-foreground">No upload — captured live from camera</div>
             </div>
-            <input type="file" accept="image/*" capture="user" className="hidden" onChange={onPhoto} />
-          </label>
+          </button>
         </div>
+
 
         {/* Location */}
         <div>
