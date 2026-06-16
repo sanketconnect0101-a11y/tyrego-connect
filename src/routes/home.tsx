@@ -112,14 +112,14 @@ function Home() {
           </div>
           <div className="flex items-center gap-2">
             <button onClick={() => setLangOpen(true)} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur">
-              <Globe className="h-4.5 w-4.5" />
+              <Globe className="h-4 w-4" />
             </button>
             <button className="relative flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur">
-              <Bell className="h-4.5 w-4.5" />
+              <Bell className="h-4 w-4" />
               <div className="absolute right-2 top-2 h-2 w-2 rounded-full bg-warning" />
             </button>
             <button className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15 backdrop-blur">
-              <HelpCircle className="h-4.5 w-4.5" />
+              <HelpCircle className="h-4 w-4" />
             </button>
           </div>
         </div>
