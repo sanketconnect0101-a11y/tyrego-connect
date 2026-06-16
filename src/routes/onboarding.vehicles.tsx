@@ -135,6 +135,107 @@ function OwnerLocation() {
           </button>
         )}
       </div>
+
+      {showCam && (
+        <CameraSheet
+          onClose={() => setShowCam(false)}
+          onCapture={(data) => { setPhoto(data); setShowCam(false); }}
+        />
+      )}
     </div>
   );
 }
+
+function CameraSheet({ onClose, onCapture }: { onClose: () => void; onCapture: (dataUrl: string) => void }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "user", width: { ideal: 720 }, height: { ideal: 720 } },
+          audio: false,
+        });
+        if (cancelled) { stream.getTracks().forEach((t) => t.stop()); return; }
+        streamRef.current = stream;
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+          await videoRef.current.play();
+          setReady(true);
+        }
+      } catch (e: any) {
+        setError(e?.message ?? "Camera permission denied");
+      }
+    })();
+    return () => {
+      cancelled = true;
+      streamRef.current?.getTracks().forEach((t) => t.stop());
+    };
+  }, []);
+
+  const capture = () => {
+    const v = videoRef.current;
+    if (!v) return;
+    const size = Math.min(v.videoWidth, v.videoHeight) || 480;
+    const canvas = document.createElement("canvas");
+    canvas.width = size; canvas.height = size;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    const sx = (v.videoWidth - size) / 2;
+    const sy = (v.videoHeight - size) / 2;
+    // Mirror selfie
+    ctx.translate(size, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(v, sx, sy, size, size, 0, 0, size, size);
+    onCapture(canvas.toDataURL("image/jpeg", 0.85));
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex flex-col bg-foreground">
+      <div className="flex items-center justify-between p-5 text-white safe-top">
+        <button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/15"><X className="h-5 w-5" /></button>
+        <div className="text-sm font-bold">Take Selfie</div>
+        <div className="h-10 w-10" />
+      </div>
+      <div className="relative flex-1 overflow-hidden">
+        {error ? (
+          <div className="flex h-full flex-col items-center justify-center px-8 text-center text-white">
+            <Camera className="h-12 w-12 opacity-50" />
+            <div className="mt-3 text-sm font-bold">Cannot access camera</div>
+            <div className="mt-1 text-xs text-white/70">{error}</div>
+          </div>
+        ) : (
+          <>
+            <video ref={videoRef} playsInline muted className="absolute inset-0 h-full w-full -scale-x-100 object-cover" />
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+              <div className="h-72 w-72 rounded-full border-4 border-white/80 shadow-[0_0_0_9999px_rgba(0,0,0,0.55)]" />
+            </div>
+            {!ready && (
+              <div className="absolute inset-0 flex items-center justify-center text-white">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            )}
+          </>
+        )}
+      </div>
+      <div className="flex items-center justify-center gap-8 p-6 safe-bottom">
+        <button onClick={onClose} className="flex h-12 w-12 items-center justify-center rounded-full bg-white/15 text-white">
+          <RotateCcw className="h-5 w-5" />
+        </button>
+        <button
+          onClick={capture}
+          disabled={!ready}
+          className="h-20 w-20 rounded-full border-4 border-white bg-white/20 backdrop-blur disabled:opacity-40"
+        >
+          <div className="mx-auto h-14 w-14 rounded-full bg-white" />
+        </button>
+        <div className="h-12 w-12" />
+      </div>
+    </div>
+  );
+}
+
