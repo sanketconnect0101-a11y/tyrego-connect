@@ -1,8 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
 import { Stepper } from "./onboarding.shop";
-import { Camera, MapPin, Loader2, Check } from "lucide-react";
+import { Camera, MapPin, Loader2, Check, X, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding/vehicles")({ component: OwnerLocation });
 
@@ -11,11 +11,9 @@ function OwnerLocation() {
   const [loading, setLoading] = useState(false);
   const [coords, setCoords] = useState<{ lat: number; lng: number } | null>(null);
   const [address, setAddress] = useState("");
+  const [showCam, setShowCam] = useState(false);
 
-  const onPhoto = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0];
-    if (f) setPhoto(URL.createObjectURL(f));
-  };
+
 
   const fetchLocation = () => {
     setLoading(true);
