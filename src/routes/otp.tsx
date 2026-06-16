@@ -63,7 +63,14 @@ function Otp() {
         <button className="mt-5 block w-full text-center text-sm font-semibold text-primary">Resend code in 0:28</button>
 
         <button
-          onClick={() => navigate({ to: "/onboarding/shop" })}
+          onClick={() => {
+            try {
+              if (!localStorage.getItem("autoxpert_kyc_done")) {
+                localStorage.setItem("autoxpert_kyc_pending", "1");
+              }
+            } catch {}
+            navigate({ to: "/home" });
+          }}
           disabled={!complete}
           className="mt-6 w-full rounded-2xl bg-gradient-primary py-4 text-base font-bold text-primary-foreground shadow-elevated disabled:opacity-40 active:scale-[0.98] transition"
         >
