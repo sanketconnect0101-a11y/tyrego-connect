@@ -44,7 +44,11 @@ function Services() {
         })}
       </div>
       <div className="sticky bottom-0 border-t border-border bg-card/95 p-5 backdrop-blur-lg safe-bottom">
-        <Link to="/home" className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 text-base font-bold text-primary-foreground shadow-elevated">
+        <Link
+          to="/home"
+          onClick={() => { try { localStorage.setItem("autoxpert_kyc_done", "1"); localStorage.removeItem("autoxpert_kyc_pending"); } catch {} }}
+          className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 text-base font-bold text-primary-foreground shadow-elevated"
+        >
           Finish Setup →
         </Link>
       </div>
