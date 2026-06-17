@@ -42,6 +42,8 @@ export const incomingLeads: Lead[] = [
     vehicle: "Car",
     vehicleIcon: "🚗",
     problem: "Front Left Tyre Puncture",
+    problemDetails: "Driving se ekdam flat ho gaya, side mein gaadi khadi hai. Spare tyre nahi hai.",
+    photo: "https://images.unsplash.com/photo-1597007030739-6d2e7172ee6c?w=600&q=70",
     location: "Andheri East, Mumbai",
     distanceKm: 2.3,
     etaMin: 12,
@@ -55,6 +57,8 @@ export const incomingLeads: Lead[] = [
     vehicle: "Bike",
     vehicleIcon: "🏍️",
     problem: "Rear tyre flat, need replacement",
+    problemDetails: "Tyre bilkul phat gaya hai, ride nahi kar sakta. Naya tyre chahiye.",
+    photo: "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=600&q=70",
     location: "Powai, Mumbai",
     distanceKm: 3.8,
     etaMin: 16,
@@ -68,6 +72,8 @@ export const incomingLeads: Lead[] = [
     vehicle: "SUV",
     vehicleIcon: "🚙",
     problem: "Air filling all 4 tyres",
+    problemDetails: "Sab tyre mein hawa kam lag rahi hai, ek pe TPMS warning aa rahi hai.",
+    photo: "https://images.unsplash.com/photo-1605152276897-4f618f831968?w=600&q=70",
     location: "Bandra West",
     distanceKm: 1.2,
     etaMin: 6,
@@ -77,6 +83,7 @@ export const incomingLeads: Lead[] = [
     customerPhone: "+91 99800 11122",
   },
 ];
+
 
 export const staffList: Staff[] = [
   { id: "S1", name: "Ramesh Yadav", phone: "+91 98111 22222", vehicles: ["Bike", "Car", "Auto"], active: true, distanceKm: 0.4, avatar: "RY" },
