@@ -59,6 +59,8 @@ function Home() {
   const activeJobs = recentJobs.filter((j) => j.status === "active");
   const t = T[lang];
 
+  const [missToast, setMissToast] = useState<string | null>(null);
+
   useEffect(() => {
     try {
       setKycPending(!!localStorage.getItem("autoxpert_kyc_pending") && !localStorage.getItem("autoxpert_kyc_done"));
@@ -76,6 +78,27 @@ function Home() {
     }, 6000);
     return () => clearTimeout(t);
   }, [online, activeLead, kycPending]);
+
+  // Miss-lead nudges when offline
+  useEffect(() => {
+    if (online || kycPending) { setMissToast(null); return; }
+    const messages = [
+      "⚡ Abhi-abhi ₹700 ki lead miss hui! Online ho jao",
+      "🔥 Aapke 1km mein 3 leads — offline ho!",
+      "💰 ₹1,200 ki tyre replacement lead bagal mein gayi",
+      "🚨 5 minute mein 2 leads miss — online aao",
+    ];
+    let i = 0;
+    const tick = () => {
+      setMissToast(messages[i % messages.length]);
+      i += 1;
+      setTimeout(() => setMissToast(null), 4000);
+    };
+    const first = setTimeout(tick, 2500);
+    const loop = setInterval(tick, 9000);
+    return () => { clearTimeout(first); clearInterval(loop); };
+  }, [online, kycPending]);
+
 
   const triggerNow = () => {
     if (kycPending) { setShowKyc(true); return; }
