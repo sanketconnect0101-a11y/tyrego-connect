@@ -98,7 +98,7 @@ function Home() {
   return (
     <MobileShell>
       {/* Header */}
-      <header className="bg-gradient-hero px-5 pb-20 pt-12 text-white safe-top">
+      <header className="relative bg-gradient-hero px-5 pb-20 pt-12 text-white safe-top">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary font-extrabold shadow-elevated">
@@ -123,7 +123,12 @@ function Home() {
             </button>
           </div>
         </div>
+        {/* Curved bottom */}
+        <svg className="absolute -bottom-px left-0 right-0 w-full" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden>
+          <path d="M0 0 Q200 60 400 0 L400 40 L0 40 Z" fill="hsl(var(--background))" />
+        </svg>
       </header>
+
 
       {/* Earnings Hero Card */}
       <section className="-mt-16 px-5">
