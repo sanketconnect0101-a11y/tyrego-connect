@@ -125,8 +125,9 @@ function Home() {
         </div>
         {/* Curved bottom */}
         <svg className="absolute -bottom-px left-0 right-0 w-full" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden>
-          <path d="M0 0 Q200 60 400 0 L400 40 L0 40 Z" fill="hsl(var(--background))" />
+          <path d="M0 0 Q200 60 400 0 L400 40 L0 40 Z" fill="var(--background)" />
         </svg>
+
       </header>
 
 
