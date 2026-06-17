@@ -3,6 +3,8 @@ export type Lead = {
   vehicle: string;
   vehicleIcon: string;
   problem: string;
+  problemDetails?: string;
+  photo?: string;
   location: string;
   distanceKm: number;
   etaMin: number;
@@ -11,6 +13,7 @@ export type Lead = {
   customerName: string;
   customerPhone: string;
 };
+
 
 export type Staff = {
   id: string;
