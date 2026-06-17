@@ -203,9 +203,9 @@ function Home() {
         </section>
       )}
 
-      {/* Online/Offline — center hero when offline, compact pill when online */}
+      {/* Online/Offline — circle is the toggle; animates up when going online */}
       {online ? (
-        <section className="px-5 pt-5">
+        <section className="px-5 pt-4 animate-slide-down-fade">
           <button onClick={toggleOnline} className="flex w-full items-center justify-between rounded-2xl bg-gradient-primary p-3 text-primary-foreground shadow-card">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
@@ -221,26 +221,24 @@ function Home() {
           </button>
         </section>
       ) : (
-        <section className="flex flex-col items-center px-5 pt-8 pb-2">
+        <section className="flex flex-col items-center px-5 pt-6 pb-1">
           <button
             onClick={toggleOnline}
+            aria-label="Go Online"
             className="group relative flex h-44 w-44 flex-col items-center justify-center rounded-full bg-card shadow-elevated transition active:scale-95"
           >
             <span className="absolute inset-0 rounded-full border-4 border-dashed border-border" />
-            <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-secondary text-foreground">
-              <div className="text-3xl">😴</div>
-              <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">OFFLINE</div>
+            <span className="absolute inset-2 rounded-full bg-gradient-primary opacity-90" />
+            <span className="absolute inset-0 animate-pulse-ring rounded-full" />
+            <div className="relative flex flex-col items-center justify-center text-primary-foreground">
+              <div className="text-3xl">⚡</div>
+              <div className="mt-1 text-sm font-extrabold uppercase tracking-wider">Go Online</div>
+              <div className="text-[10px] font-medium text-white/85">Tap to start</div>
             </div>
-          </button>
-          <div className="mt-4 text-center">
-            <div className="text-base font-extrabold">{t.statusOffline}</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">{t.statusOffSub}</div>
-          </div>
-          <button onClick={toggleOnline} className="mt-4 rounded-full bg-gradient-primary px-8 py-3 text-sm font-extrabold text-primary-foreground shadow-elevated">
-            Go Online
           </button>
         </section>
       )}
+
 
       {/* Waiting / simulate (only when online) */}
       {online && (
