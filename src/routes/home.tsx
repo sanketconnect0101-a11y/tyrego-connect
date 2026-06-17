@@ -290,6 +290,21 @@ function Home() {
 
       {lead && <LeadSheet lead={lead} onClose={() => setActiveLead(null)} />}
 
+      {/* Miss-lead nudge toast */}
+      {missToast && !online && (
+        <div className="pointer-events-none fixed inset-x-0 top-3 z-40 flex justify-center px-4">
+          <button
+            onClick={toggleOnline}
+            className="pointer-events-auto animate-toast-in flex items-center gap-2 rounded-2xl bg-foreground/95 px-4 py-2.5 text-xs font-bold text-background shadow-elevated backdrop-blur"
+          >
+            <Zap className="h-4 w-4 text-warning" />
+            <span className="max-w-[260px] text-left">{missToast}</span>
+            <span className="rounded-full bg-warning px-2 py-0.5 text-[10px] text-warning-foreground">Go Online</span>
+          </button>
+        </div>
+      )}
+
+
       {/* Language picker */}
       {langOpen && (
         <div className="fixed inset-0 z-50 flex items-end justify-center bg-foreground/50 backdrop-blur-sm" onClick={() => setLangOpen(false)}>
