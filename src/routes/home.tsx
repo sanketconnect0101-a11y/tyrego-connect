@@ -59,6 +59,8 @@ function Home() {
   const activeJobs = recentJobs.filter((j) => j.status === "active");
   const t = T[lang];
 
+  const [missToast, setMissToast] = useState<string | null>(null);
+
   useEffect(() => {
     try {
       setKycPending(!!localStorage.getItem("autoxpert_kyc_pending") && !localStorage.getItem("autoxpert_kyc_done"));
@@ -76,6 +78,27 @@ function Home() {
     }, 6000);
     return () => clearTimeout(t);
   }, [online, activeLead, kycPending]);
+
+  // Miss-lead nudges when offline
+  useEffect(() => {
+    if (online || kycPending) { setMissToast(null); return; }
+    const messages = [
+      "⚡ Abhi-abhi ₹700 ki lead miss hui! Online ho jao",
+      "🔥 Aapke 1km mein 3 leads — offline ho!",
+      "💰 ₹1,200 ki tyre replacement lead bagal mein gayi",
+      "🚨 5 minute mein 2 leads miss — online aao",
+    ];
+    let i = 0;
+    const tick = () => {
+      setMissToast(messages[i % messages.length]);
+      i += 1;
+      setTimeout(() => setMissToast(null), 4000);
+    };
+    const first = setTimeout(tick, 2500);
+    const loop = setInterval(tick, 9000);
+    return () => { clearTimeout(first); clearInterval(loop); };
+  }, [online, kycPending]);
+
 
   const triggerNow = () => {
     if (kycPending) { setShowKyc(true); return; }
@@ -98,7 +121,7 @@ function Home() {
   return (
     <MobileShell>
       {/* Header */}
-      <header className="bg-gradient-hero px-5 pb-20 pt-12 text-white safe-top">
+      <header className="relative bg-gradient-hero px-5 pb-20 pt-12 text-white safe-top">
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
             <div className="relative flex h-12 w-12 items-center justify-center rounded-full bg-white text-primary font-extrabold shadow-elevated">
@@ -123,7 +146,13 @@ function Home() {
             </button>
           </div>
         </div>
+        {/* Curved bottom */}
+        <svg className="absolute -bottom-px left-0 right-0 w-full" viewBox="0 0 400 40" preserveAspectRatio="none" aria-hidden>
+          <path d="M0 0 Q200 60 400 0 L400 40 L0 40 Z" fill="var(--background)" />
+        </svg>
+
       </header>
+
 
       {/* Earnings Hero Card */}
       <section className="-mt-16 px-5">
@@ -174,9 +203,9 @@ function Home() {
         </section>
       )}
 
-      {/* Online/Offline — center hero when offline, compact pill when online */}
+      {/* Online/Offline — circle is the toggle; animates up when going online */}
       {online ? (
-        <section className="px-5 pt-5">
+        <section className="px-5 pt-4 animate-slide-down-fade">
           <button onClick={toggleOnline} className="flex w-full items-center justify-between rounded-2xl bg-gradient-primary p-3 text-primary-foreground shadow-card">
             <div className="flex items-center gap-2">
               <span className="relative flex h-2.5 w-2.5">
@@ -192,26 +221,24 @@ function Home() {
           </button>
         </section>
       ) : (
-        <section className="flex flex-col items-center px-5 pt-8 pb-2">
+        <section className="flex flex-col items-center px-5 pt-6 pb-1">
           <button
             onClick={toggleOnline}
+            aria-label="Go Online"
             className="group relative flex h-44 w-44 flex-col items-center justify-center rounded-full bg-card shadow-elevated transition active:scale-95"
           >
             <span className="absolute inset-0 rounded-full border-4 border-dashed border-border" />
-            <div className="flex h-24 w-24 flex-col items-center justify-center rounded-full bg-secondary text-foreground">
-              <div className="text-3xl">😴</div>
-              <div className="mt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">OFFLINE</div>
+            <span className="absolute inset-2 rounded-full bg-gradient-primary opacity-90" />
+            <span className="absolute inset-0 animate-pulse-ring rounded-full" />
+            <div className="relative flex flex-col items-center justify-center text-primary-foreground">
+              <div className="text-3xl">⚡</div>
+              <div className="mt-1 text-sm font-extrabold uppercase tracking-wider">Go Online</div>
+              <div className="text-[10px] font-medium text-white/85">Tap to start</div>
             </div>
-          </button>
-          <div className="mt-4 text-center">
-            <div className="text-base font-extrabold">{t.statusOffline}</div>
-            <div className="mt-0.5 text-xs text-muted-foreground">{t.statusOffSub}</div>
-          </div>
-          <button onClick={toggleOnline} className="mt-4 rounded-full bg-gradient-primary px-8 py-3 text-sm font-extrabold text-primary-foreground shadow-elevated">
-            Go Online
           </button>
         </section>
       )}
+
 
       {/* Waiting / simulate (only when online) */}
       {online && (
@@ -262,6 +289,21 @@ function Home() {
       </section>
 
       {lead && <LeadSheet lead={lead} onClose={() => setActiveLead(null)} />}
+
+      {/* Miss-lead nudge toast */}
+      {missToast && !online && (
+        <div className="pointer-events-none fixed inset-x-0 top-3 z-40 flex justify-center px-4">
+          <button
+            onClick={toggleOnline}
+            className="pointer-events-auto animate-toast-in flex items-center gap-2 rounded-2xl bg-foreground/95 px-4 py-2.5 text-xs font-bold text-background shadow-elevated backdrop-blur"
+          >
+            <Zap className="h-4 w-4 text-warning" />
+            <span className="max-w-[260px] text-left">{missToast}</span>
+            <span className="rounded-full bg-warning px-2 py-0.5 text-[10px] text-warning-foreground">Go Online</span>
+          </button>
+        </div>
+      )}
+
 
       {/* Language picker */}
       {langOpen && (
