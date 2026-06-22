@@ -63,8 +63,7 @@ function Profile() {
         <Row icon={<MapPin className="h-5 w-5" />} label="Service Radius" value="10 km" />
       </div>
 
-      <div class
-Name="mt-6 space-y-3 px-5">
+      <div className="mt-6 space-y-3 px-5">
         <Link to="/staff" className="flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-4 text-left shadow-card">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary"><Users className="h-5 w-5" /></div>
           <div className="min-w-0 flex-1">
