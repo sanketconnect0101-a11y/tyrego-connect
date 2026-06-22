@@ -82,6 +82,21 @@ export const incomingLeads: Lead[] = [
     customerName: "Amit Kumar",
     customerPhone: "+91 99800 11122",
   },
+  {
+    id: "L-9824",
+    vehicle: "Tow Van",
+    vehicleIcon: "🛻",
+    problem: "Tow Van Required — Vehicle Breakdown",
+    problemDetails: "Gaadi bilkul band ho gayi hai, start nahi ho rahi. Nearest garage tak tow chahiye. Fixed rate ₹1,500.",
+    photo: "https://images.unsplash.com/photo-1601362840469-51e4d8d58785?w=600&q=70",
+    location: "Sakinaka Junction, Mumbai",
+    distanceKm: 2.8,
+    etaMin: 14,
+    amount: 1500,
+    priority: "high",
+    customerName: "Vivek Joshi",
+    customerPhone: "+91 98330 55667",
+  },
 ];
 
 
