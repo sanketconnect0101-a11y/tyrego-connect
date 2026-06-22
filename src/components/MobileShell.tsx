@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { Home, Users, Briefcase, User } from "lucide-react";
+import { Home, ShoppingBag, Briefcase, User } from "lucide-react";
 
 export function MobileShell({ children, hideNav = false }: { children: ReactNode; hideNav?: boolean }) {
   return (
@@ -13,7 +13,7 @@ export function MobileShell({ children, hideNav = false }: { children: ReactNode
 
 const tabs = [
   { to: "/home", label: "Home", icon: Home },
-  { to: "/staff", label: "Staff", icon: Users },
+  { to: "/marketplace", label: "Market", icon: ShoppingBag },
   { to: "/jobs", label: "Jobs", icon: Briefcase },
   { to: "/profile", label: "Profile", icon: User },
 ] as const;
