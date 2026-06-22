@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Bell, ChevronRight, Briefcase, Radio, Zap, ShieldAlert, Globe, X, TrendingUp, Wallet, Banknote, Clock, HelpCircle } from "lucide-react";
+import { Bell, ChevronRight, Briefcase, Radio, Zap, ShieldAlert, Globe, X, TrendingUp, Wallet, Banknote, Clock, HelpCircle, Truck, Shield, Phone, MapPin } from "lucide-react";
 import { MobileShell } from "@/components/MobileShell";
 import { LeadSheet } from "@/components/LeadSheet";
 import { incomingLeads, recentJobs } from "@/lib/mock-data";
@@ -259,6 +259,53 @@ function Home() {
           </div>
         </section>
       )}
+
+      {/* Tow Van — fixed rate */}
+      <section className="px-5 pt-6">
+        <div className="overflow-hidden rounded-3xl border border-border bg-card shadow-card">
+          <div className="flex items-center gap-3 bg-gradient-to-r from-warning/20 to-warning/5 px-4 py-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-warning text-warning-foreground"><Truck className="h-5 w-5" /></div>
+            <div className="min-w-0 flex-1">
+              <div className="text-sm font-extrabold">Tow Van Service</div>
+              <div className="text-[11px] text-muted-foreground">Customer can also book directly</div>
+            </div>
+            <div className="rounded-full bg-warning px-3 py-1 text-[11px] font-extrabold text-warning-foreground">FIXED ₹1,500</div>
+          </div>
+          <div className="grid grid-cols-2 gap-2 p-3">
+            <button className="rounded-2xl border border-border bg-card py-2.5 text-xs font-bold text-muted-foreground">Manage Fleet</button>
+            <button className="rounded-2xl bg-gradient-primary py-2.5 text-xs font-bold text-primary-foreground shadow-card">Accept Tow Leads</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Nearby Police Stations */}
+      <section className="px-5 pt-4">
+        <div className="rounded-3xl border border-border bg-card p-4 shadow-card">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-destructive/10 text-destructive"><Shield className="h-4 w-4" /></div>
+            <div className="flex-1">
+              <div className="text-sm font-extrabold">Nearby Police Stations</div>
+              <div className="text-[11px] text-muted-foreground">For emergencies & FIR support</div>
+            </div>
+          </div>
+          <div className="mt-3 space-y-2">
+            {[
+              { name: "Andheri East PS", dist: "1.2 km", phone: "022-26836817" },
+              { name: "MIDC Police Station", dist: "2.4 km", phone: "022-28367865" },
+              { name: "Sahar PS", dist: "3.8 km", phone: "022-26822334" },
+            ].map((p) => (
+              <div key={p.name} className="flex items-center gap-3 rounded-2xl border border-border bg-background p-2.5">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-destructive/10 text-destructive"><MapPin className="h-4 w-4" /></div>
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-xs font-bold">{p.name}</div>
+                  <div className="text-[10px] text-muted-foreground">{p.dist} away</div>
+                </div>
+                <a href={`tel:${p.phone}`} className="flex h-9 items-center gap-1 rounded-full bg-success px-3 text-[11px] font-bold text-success-foreground"><Phone className="h-3 w-3" /> Call</a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Active Jobs */}
       <section className="px-5 pb-6 pt-6">

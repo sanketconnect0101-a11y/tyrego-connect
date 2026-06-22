@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as StaffRouteImport } from './routes/staff'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as OtpRouteImport } from './routes/otp'
+import { Route as MarketplaceRouteImport } from './routes/marketplace'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as JobsRouteImport } from './routes/jobs'
 import { Route as HomeRouteImport } from './routes/home'
@@ -40,6 +41,11 @@ const ProfileRoute = ProfileRouteImport.update({
 const OtpRoute = OtpRouteImport.update({
   id: '/otp',
   path: '/otp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarketplaceRoute = MarketplaceRouteImport.update({
+  id: '/marketplace',
+  path: '/marketplace',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/home': typeof HomeRoute
   '/jobs': typeof JobsRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRoute
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
@@ -137,6 +144,7 @@ export interface FileRoutesByTo {
   '/home': typeof HomeRoute
   '/jobs': typeof JobsRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRoute
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
@@ -156,6 +164,7 @@ export interface FileRoutesById {
   '/home': typeof HomeRoute
   '/jobs': typeof JobsRoute
   '/login': typeof LoginRoute
+  '/marketplace': typeof MarketplaceRoute
   '/otp': typeof OtpRoute
   '/profile': typeof ProfileRoute
   '/staff': typeof StaffRoute
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/jobs'
     | '/login'
+    | '/marketplace'
     | '/otp'
     | '/profile'
     | '/staff'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/jobs'
     | '/login'
+    | '/marketplace'
     | '/otp'
     | '/profile'
     | '/staff'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/home'
     | '/jobs'
     | '/login'
+    | '/marketplace'
     | '/otp'
     | '/profile'
     | '/staff'
@@ -234,6 +246,7 @@ export interface RootRouteChildren {
   HomeRoute: typeof HomeRoute
   JobsRoute: typeof JobsRoute
   LoginRoute: typeof LoginRoute
+  MarketplaceRoute: typeof MarketplaceRoute
   OtpRoute: typeof OtpRoute
   ProfileRoute: typeof ProfileRoute
   StaffRoute: typeof StaffRoute
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/otp'
       fullPath: '/otp'
       preLoaderRoute: typeof OtpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marketplace': {
+      id: '/marketplace'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof MarketplaceRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -391,6 +411,7 @@ const rootRouteChildren: RootRouteChildren = {
   HomeRoute: HomeRoute,
   JobsRoute: JobsRoute,
   LoginRoute: LoginRoute,
+  MarketplaceRoute: MarketplaceRoute,
   OtpRoute: OtpRoute,
   ProfileRoute: ProfileRoute,
   StaffRoute: StaffRoute,

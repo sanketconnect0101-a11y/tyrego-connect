@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { MobileShell } from "@/components/MobileShell";
-import { ChevronRight, Store, Truck, Wrench, Clock, MapPin, LogOut, Star, Settings, HelpCircle, Plus, X, Trash2 } from "lucide-react";
+import { ChevronRight, Store, Truck, Wrench, Clock, MapPin, LogOut, Star, Settings, HelpCircle, Plus, X, Trash2, Users } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({ component: Profile });
 
@@ -64,6 +64,14 @@ function Profile() {
       </div>
 
       <div className="mt-6 space-y-3 px-5">
+        <Link to="/staff" className="flex w-full items-center gap-4 rounded-2xl border border-border bg-card p-4 text-left shadow-card">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-primary"><Users className="h-5 w-5" /></div>
+          <div className="min-w-0 flex-1">
+            <div className="text-sm font-bold">Manage Staff</div>
+            <div className="truncate text-xs text-muted-foreground">Add or remove team members</div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-muted-foreground" />
+        </Link>
         <Row icon={<Settings className="h-5 w-5" />} label="Settings" />
         <Row icon={<HelpCircle className="h-5 w-5" />} label="Help & Support" />
       </div>
