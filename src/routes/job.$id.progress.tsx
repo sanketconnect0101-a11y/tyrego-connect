@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
-import { Check, Mic, Square, Play, Pause, Trash2 } from "lucide-react";
+import { Check, Mic, Square, Play, Pause, Trash2, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/progress")({ component: Progress });
 
