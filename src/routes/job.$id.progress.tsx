@@ -88,19 +88,58 @@ function Progress() {
         <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
           <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Service Completed</div>
           <div className="mt-3 grid grid-cols-2 gap-2">
-            {SERVICES.map((s) => {
+            {allServices.map((s) => {
               const active = services.has(s);
+              const isExtra = extraServices.includes(s);
               return (
-                <button key={s} onClick={() => toggle(s)} className={`flex items-center gap-2 rounded-xl border-2 p-3 text-left text-xs font-semibold transition ${active ? "border-primary bg-primary-soft text-primary" : "border-border bg-card text-foreground"}`}>
-                  <div className={`flex h-5 w-5 items-center justify-center rounded-md border-2 ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
+                <button key={s} onClick={() => toggle(s)} className={`relative flex items-center gap-2 rounded-xl border-2 p-3 text-left text-xs font-semibold transition ${active ? "border-primary bg-primary-soft text-primary" : "border-border bg-card text-foreground"}`}>
+                  <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 ${active ? "border-primary bg-primary text-primary-foreground" : "border-border"}`}>
                     {active && <Check className="h-3 w-3" strokeWidth={3} />}
                   </div>
-                  {s}
+                  <span className="flex-1 truncate">{s}</span>
+                  {isExtra && (
+                    <button
+                      onClick={(e) => removeExtra(s, e)}
+                      className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-destructive/15 text-destructive"
+                      aria-label={`Remove ${s}`}
+                    >
+                      ×
+                    </button>
+                  )}
                 </button>
               );
             })}
+            <button
+              onClick={() => setShowAddService(true)}
+              className="flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-primary/40 bg-primary-soft p-3 text-xs font-bold text-primary transition"
+            >
+              <Plus className="h-4 w-4" /> Add Service
+            </button>
           </div>
         </div>
+
+        {/* Add Service modal */}
+        {showAddService && (
+          <div className="fixed inset-0 z-50 flex items-end bg-foreground/40 backdrop-blur-sm">
+            <div className="mx-auto w-full max-w-md animate-sheet-up rounded-t-3xl bg-card p-5 shadow-sheet">
+              <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-border" />
+              <h3 className="text-xl font-bold">Add Extra Service</h3>
+              <p className="text-xs text-muted-foreground">Add any service not in the list</p>
+              <input
+                value={newService}
+                onChange={(e) => setNewService(e.target.value)}
+                placeholder="e.g., Chain Repair, Oil Change"
+                className="mt-4 w-full rounded-2xl border border-border bg-background px-4 py-3 text-sm font-semibold text-foreground outline-none focus:border-primary"
+                autoFocus
+                onKeyDown={(e) => { if (e.key === "Enter") addService(); }}
+              />
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <button onClick={() => setShowAddService(false)} className="rounded-2xl border border-border py-3 font-bold text-muted-foreground">Cancel</button>
+                <button onClick={addService} className="rounded-2xl bg-gradient-primary py-3 font-bold text-primary-foreground shadow-elevated">Add</button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Status checkboxes (replaces note) */}
         <div className="rounded-2xl border border-border bg-card p-5 shadow-card">
