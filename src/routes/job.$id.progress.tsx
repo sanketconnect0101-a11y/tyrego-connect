@@ -20,6 +20,11 @@ function Progress() {
   const [step, setStep] = useState(2);
   const [services, setServices] = useState<Set<string>>(new Set(["Puncture Fixed"]));
   const [status, setStatus] = useState<Set<string>>(new Set(["attended"]));
+  const [extraServices, setExtraServices] = useState<string[]>([]);
+  const [showAddService, setShowAddService] = useState(false);
+  const [newService, setNewService] = useState("");
+
+  const allServices = [...SERVICES, ...extraServices];
 
   const toggle = (s: string) => {
     const n = new Set(services);
@@ -30,6 +35,23 @@ function Progress() {
     const n = new Set(status);
     n.has(s) ? n.delete(s) : n.add(s);
     setStatus(n);
+  };
+  const addService = () => {
+    const trimmed = newService.trim();
+    if (!trimmed) return;
+    if (!allServices.includes(trimmed)) setExtraServices((prev) => [...prev, trimmed]);
+    setServices((prev) => new Set(prev).add(trimmed));
+    setNewService("");
+    setShowAddService(false);
+  };
+  const removeExtra = (s: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExtraServices((prev) => prev.filter((x) => x !== s));
+    setServices((prev) => {
+      const n = new Set(prev);
+      n.delete(s);
+      return n;
+    });
   };
 
   return (
