@@ -399,34 +399,42 @@ function InventorySheet({ services, onSave, onClose }: { services: Service[]; on
   };
   const remove = (id: string) => setList((arr) => arr.filter((s) => s.id !== id));
   const updatePrice = (id: string, p: number) => setList((arr) => arr.map((s) => (s.id === id ? { ...s, price: p } : s)));
+  const save = () => { onSave(list); onClose(); };
 
   return (
-    <Sheet title="Services Inventory" subtitle="Set your own prices for each service" onClose={onClose}
-      footer={<SaveBtn onClick={() => { onSave(list); onClose(); }} label="Save Inventory" />}>
+    <Sheet title="Services Inventory" onClose={save}
+      action={
+        <button onClick={save} className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-primary-foreground">
+          <Check className="h-4 w-4" />
+        </button>
+      }>
       <div className="space-y-2">
         {list.map((s) => (
-          <div key={s.id} className="flex items-center gap-3 rounded-2xl border border-border bg-card p-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary-soft text-xl">{s.icon}</div>
-            <div className="flex-1 text-sm font-bold">{s.name}</div>
-            <div className="flex items-center gap-1 rounded-xl border border-border bg-background px-2 py-1.5">
+          <div key={s.id} className="flex items-center gap-3 rounded-xl border border-border bg-card p-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-lg">{s.icon}</div>
+            <div className="min-w-0 flex-1 text-sm font-bold">{s.name}</div>
+            <div className="flex items-center gap-1 rounded-lg border border-border bg-background px-2 py-1">
               <span className="text-xs font-bold text-muted-foreground">₹</span>
-              <input inputMode="numeric" value={s.price} onChange={(e) => updatePrice(s.id, parseInt(e.target.value || "0", 10))} className="w-16 bg-transparent text-sm font-bold outline-none" />
+              <input inputMode="numeric" value={s.price} onChange={(e) => updatePrice(s.id, parseInt(e.target.value || "0", 10))} className="w-14 bg-transparent text-right text-sm font-bold outline-none" />
             </div>
-            <button onClick={() => remove(s.id)} className="text-destructive"><Trash2 className="h-4 w-4" /></button>
+            <button onClick={() => remove(s.id)} className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-destructive active:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
           </div>
         ))}
       </div>
-      <div className="mt-4 rounded-2xl border-2 border-dashed border-border p-3">
-        <div className="text-xs font-bold uppercase text-muted-foreground">Add new service</div>
-        <div className="mt-2 flex gap-2">
-          <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Service name" className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
-          <input inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value.replace(/\D/g, ""))} placeholder="₹" className="w-20 rounded-xl border border-border bg-background px-3 py-2 text-sm outline-none focus:border-primary" />
-          <button onClick={add} className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground"><Plus className="h-4 w-4" /></button>
-        </div>
+
+      <div className="mt-2 flex items-center gap-2 rounded-xl border border-border bg-card p-2">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary-soft text-lg">🛠️</div>
+        <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Add service..." className="min-w-0 flex-1 bg-transparent px-1 text-sm font-semibold outline-none placeholder:text-muted-foreground" />
+        <input inputMode="numeric" value={price} onChange={(e) => setPrice(e.target.value.replace(/\D/g, ""))} placeholder="₹" className="w-16 bg-transparent px-1 text-right text-sm font-semibold outline-none placeholder:text-muted-foreground" />
+        <button onClick={add} disabled={!name.trim() || !price} className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground disabled:opacity-40">
+          <Plus className="h-4 w-4" />
+        </button>
       </div>
+      <p className="mt-2 text-[11px] text-muted-foreground">Tap ✓ to save. Tap the price to edit.</p>
     </Sheet>
   );
 }
+
 
 /* ---------- Row ---------- */
 
