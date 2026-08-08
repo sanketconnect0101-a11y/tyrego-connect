@@ -159,14 +159,17 @@ function Profile() {
 
 /* ---------- shared sheet shell ---------- */
 
-function Sheet({ title, subtitle, onClose, children, footer }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode }) {
+function Sheet({ title, subtitle, onClose, children, footer, action }: { title: string; subtitle?: string; onClose: () => void; children: ReactNode; footer?: ReactNode; action?: ReactNode }) {
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-foreground/50 backdrop-blur-sm" onClick={onClose}>
       <div onClick={(e) => e.stopPropagation()} className="mx-auto w-full max-w-md animate-sheet-up rounded-t-3xl bg-card p-5 shadow-sheet safe-bottom">
         <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-border" />
         <div className="flex items-center justify-between">
           <h3 className="text-xl font-extrabold">{title}</h3>
-          <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary"><X className="h-4 w-4" /></button>
+          <div className="flex items-center gap-2">
+            {action}
+            <button onClick={onClose} className="flex h-9 w-9 items-center justify-center rounded-full bg-secondary"><X className="h-4 w-4" /></button>
+          </div>
         </div>
         {subtitle && <p className="mt-0.5 text-xs text-muted-foreground">{subtitle}</p>}
         <div className="mt-4 max-h-[55vh] overflow-y-auto">{children}</div>
