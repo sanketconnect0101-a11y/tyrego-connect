@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import { MobileShell } from "@/components/MobileShell";
-import { ChevronRight, Store, Truck, Wrench, Clock, MapPin, LogOut, Star, Settings, HelpCircle, Plus, X, Trash2, Users, Camera, Phone, MessageCircle, Mail, ChevronDown } from "lucide-react";
+import { ChevronRight, Store, Truck, Wrench, Clock, MapPin, LogOut, Star, Settings, HelpCircle, Plus, X, Trash2, Users, Camera, Phone, MessageCircle, Mail, ChevronDown, Check } from "lucide-react";
 
 export const Route = createFileRoute("/profile")({ component: Profile });
 
