@@ -68,7 +68,7 @@ function Summary() {
 
       <div className="flex-1" />
       <div className="space-y-3 p-4 safe-bottom">
-        <button className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-border py-3.5 font-bold">
+        <button onClick={downloadInvoice} className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-border py-3.5 font-bold">
           <Download className="h-4 w-4" /> Download Invoice
         </button>
         <Link to="/jobs" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated">
