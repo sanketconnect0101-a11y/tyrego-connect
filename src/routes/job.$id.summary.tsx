@@ -23,6 +23,39 @@ function Summary() {
 
   if (!job) return <div className="p-10 text-center">Job not found</div>;
 
+  const downloadInvoice = () => {
+    const rows: [string, string][] = [
+      ["Invoice No", `INV-${job.id}`],
+      ["Date", job.time],
+      ["Customer", job.customer],
+      ["Vehicle", job.vehicle],
+      ["Service", job.problem],
+      ["Staff", job.staff || "Self"],
+      ["Payment Mode", "Cash"],
+    ];
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Invoice ${job.id}</title>
+<style>body{font-family:system-ui,sans-serif;padding:32px;color:#111}h1{margin:0;font-size:22px}
+.sub{color:#666;font-size:12px;margin-bottom:24px}table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:10px 0;border-bottom:1px solid #eee}td:last-child{text-align:right;font-weight:600}
+.total{margin-top:24px;display:flex;justify-content:space-between;font-size:20px;font-weight:800}
+.paid{margin-top:8px;color:#0a0;font-size:12px;font-weight:700}</style></head>
+<body><h1>AutoXpert</h1><div class="sub">Tax Invoice · Sharma Auto Works</div>
+<table>${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}</table>
+<div class="total"><span>Total Paid</span><span>&#8377;${job.amount}</span></div>
+<div class="paid">PAYMENT RECEIVED</div>
+<script>window.onload=function(){window.print()}<\/script></body></html>`;
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, "_blank");
+    if (!w) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Invoice-${job.id}.html`;
+      a.click();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  };
+
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">
       <ScreenHeader title="Completed Job" back />
