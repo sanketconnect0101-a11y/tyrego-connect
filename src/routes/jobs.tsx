@@ -43,8 +43,10 @@ function JobsPage() {
             <div className="text-xs text-muted-foreground">They'll appear here</div>
           </div>
         )}
-        {filtered.map((j) => (
-          <Link to="/job/$id" params={{ id: j.id }} key={j.id} className="block rounded-2xl border border-border bg-card p-4 shadow-card">
+        {filtered.map((j) => {
+          const to = j.status === "completed" ? "/job/$id/summary" : j.status === "cancelled" ? "/job/$id/cancelled" : "/job/$id";
+          return (
+          <Link to={to} params={{ id: j.id }} key={j.id} className="block rounded-2xl border border-border bg-card p-4 shadow-card">
             <div className="flex items-start justify-between">
               <div>
                 <div className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">{j.id}</div>
