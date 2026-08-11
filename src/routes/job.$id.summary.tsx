@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ScreenHeader } from "@/components/MobileShell";
 import { recentJobs } from "@/lib/mock-data";
-import { CheckCircle2, IndianRupee, Phone, Star, Download, RotateCcw } from "lucide-react";
+import { CheckCircle2, IndianRupee, Phone, Download, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/summary")({
   head: () => ({
@@ -57,10 +57,7 @@ function Summary() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary font-bold">{job.customer.charAt(0)}</div>
             <div className="flex-1">
               <div className="font-bold">{job.customer}</div>
-              <div className="flex items-center gap-1 text-xs text-warning">
-                {[1, 2, 3, 4, 5].map((n) => <Star key={n} className="h-3 w-3 fill-current" />)}
-                <span className="ml-1 text-muted-foreground">5.0 rating</span>
-              </div>
+              <div className="text-xs text-muted-foreground">+91 98xxx xxxxx</div>
             </div>
             <button className="flex h-10 w-10 items-center justify-center rounded-full bg-success/15 text-success">
               <Phone className="h-4 w-4" />
