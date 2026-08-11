@@ -63,7 +63,8 @@ function JobsPage() {
               </div>
             </div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </MobileShell>
   );
