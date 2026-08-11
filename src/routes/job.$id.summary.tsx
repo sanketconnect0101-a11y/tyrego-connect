@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ScreenHeader } from "@/components/MobileShell";
 import { recentJobs } from "@/lib/mock-data";
-import { CheckCircle2, IndianRupee, Phone, Star, Download, RotateCcw } from "lucide-react";
+import { CheckCircle2, IndianRupee, Phone, Download, RotateCcw } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/summary")({
   head: () => ({
@@ -22,6 +22,39 @@ function Summary() {
   const job = recentJobs.find((j) => j.id === id);
 
   if (!job) return <div className="p-10 text-center">Job not found</div>;
+
+  const downloadInvoice = () => {
+    const rows: [string, string][] = [
+      ["Invoice No", `INV-${job.id}`],
+      ["Date", job.time],
+      ["Customer", job.customer],
+      ["Vehicle", job.vehicle],
+      ["Service", job.problem],
+      ["Staff", job.staff || "Self"],
+      ["Payment Mode", "Cash"],
+    ];
+    const html = `<!doctype html><html><head><meta charset="utf-8"><title>Invoice ${job.id}</title>
+<style>body{font-family:system-ui,sans-serif;padding:32px;color:#111}h1{margin:0;font-size:22px}
+.sub{color:#666;font-size:12px;margin-bottom:24px}table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:10px 0;border-bottom:1px solid #eee}td:last-child{text-align:right;font-weight:600}
+.total{margin-top:24px;display:flex;justify-content:space-between;font-size:20px;font-weight:800}
+.paid{margin-top:8px;color:#0a0;font-size:12px;font-weight:700}</style></head>
+<body><h1>AutoXpert</h1><div class="sub">Tax Invoice · Sharma Auto Works</div>
+<table>${rows.map(([k, v]) => `<tr><td>${k}</td><td>${v}</td></tr>`).join("")}</table>
+<div class="total"><span>Total Paid</span><span>&#8377;${job.amount}</span></div>
+<div class="paid">PAYMENT RECEIVED</div>
+<script>window.onload=function(){window.print()}<\/script></body></html>`;
+    const blob = new Blob([html], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    const w = window.open(url, "_blank");
+    if (!w) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `Invoice-${job.id}.html`;
+      a.click();
+    }
+    setTimeout(() => URL.revokeObjectURL(url), 60000);
+  };
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">
@@ -57,10 +90,7 @@ function Summary() {
             <div className="flex h-11 w-11 items-center justify-center rounded-full bg-secondary font-bold">{job.customer.charAt(0)}</div>
             <div className="flex-1">
               <div className="font-bold">{job.customer}</div>
-              <div className="flex items-center gap-1 text-xs text-warning">
-                {[1, 2, 3, 4, 5].map((n) => <Star key={n} className="h-3 w-3 fill-current" />)}
-                <span className="ml-1 text-muted-foreground">5.0 rating</span>
-              </div>
+              <div className="text-xs text-muted-foreground">+91 98xxx xxxxx</div>
             </div>
             <button className="flex h-10 w-10 items-center justify-center rounded-full bg-success/15 text-success">
               <Phone className="h-4 w-4" />
@@ -71,7 +101,7 @@ function Summary() {
 
       <div className="flex-1" />
       <div className="space-y-3 p-4 safe-bottom">
-        <button className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-border py-3.5 font-bold">
+        <button onClick={downloadInvoice} className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-border py-3.5 font-bold">
           <Download className="h-4 w-4" /> Download Invoice
         </button>
         <Link to="/jobs" className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated">
