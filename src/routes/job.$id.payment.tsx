@@ -57,6 +57,18 @@ function Payment() {
     if (applied && order < applied.minOrder) setAppliedId(null);
   }, [order, applied]);
 
+  const applyCode = () => {
+    const code = codeInput.trim().toUpperCase();
+    if (!code) return;
+    const found = offers.find((o) => o.code.toUpperCase() === code);
+    if (!found) return setCodeError("Invalid coupon code");
+    if (calcDiscount(found, order) <= 0) return setCodeError(`Min order ₹${found.minOrder} required`);
+    setAppliedId(found.id);
+    setCodeError(null);
+    setCodeInput("");
+    setShowOffers(false);
+  };
+
   const startCollect = () => {
     if (!method) return;
     setCollecting(true);
