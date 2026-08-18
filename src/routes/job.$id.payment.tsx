@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
-import { Banknote, Smartphone, CreditCard, Check, IndianRupee } from "lucide-react";
+import { eligibleOffers, type Offer } from "@/lib/mock-data";
+import { Banknote, Smartphone, CreditCard, Check, IndianRupee, Tag, Zap, Ticket, X, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/payment")({ component: Payment });
 
@@ -11,12 +12,48 @@ const METHODS = [
   { id: "card", label: "Card", icon: CreditCard, desc: "Debit / Credit" },
 ];
 
+function calcDiscount(o: Offer, order: number) {
+  if (order < o.minOrder) return 0;
+  const raw = o.discountType === "flat" ? o.value : (order * o.value) / 100;
+  return Math.floor(Math.min(raw, o.maxDiscount ?? raw));
+}
+
 function Payment() {
   const { id } = Route.useParams();
   const [method, setMethod] = useState<string | null>(null);
   const [amount, setAmount] = useState("250");
   const [collecting, setCollecting] = useState(false);
   const [done, setDone] = useState(false);
+
+  const order = parseInt(amount || "0", 10) || 0;
+
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loadingOffers, setLoadingOffers] = useState(true);
+  const [appliedId, setAppliedId] = useState<string | null>(null);
+  const [showOffers, setShowOffers] = useState(false);
+
+  // Fetch eligible offers (API)
+  useEffect(() => {
+    let alive = true;
+    setLoadingOffers(true);
+    const t = setTimeout(() => {
+      if (!alive) return;
+      setOffers(eligibleOffers);
+      setLoadingOffers(false);
+      const auto = eligibleOffers.find((o) => o.type === "auto");
+      if (auto) setAppliedId(auto.id);
+    }, 900);
+    return () => { alive = false; clearTimeout(t); };
+  }, []);
+
+  const applied = offers.find((o) => o.id === appliedId) ?? null;
+  const discount = useMemo(() => (applied ? calcDiscount(applied, order) : 0), [applied, order]);
+  const payable = Math.max(order - discount, 0);
+
+  // Drop offer if it becomes ineligible after amount edit
+  useEffect(() => {
+    if (applied && order < applied.minOrder) setAppliedId(null);
+  }, [order, applied]);
 
   const startCollect = () => {
     if (!method) return;
@@ -26,6 +63,7 @@ function Payment() {
       setDone(true);
     }, 2200);
   };
+
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">
