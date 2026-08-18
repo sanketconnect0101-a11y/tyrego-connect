@@ -232,9 +232,74 @@ function Payment() {
           </div>
         </div>
       )}
+
+      {/* Offers sheet */}
+      {showOffers && (
+        <div className="fixed inset-0 z-50 flex items-end bg-foreground/40 backdrop-blur-sm">
+          <div className="mx-auto w-full max-w-md animate-sheet-up rounded-t-3xl bg-card p-5 shadow-sheet">
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-border" />
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold">Eligible Offers</h3>
+                <p className="text-xs text-muted-foreground">Order amount ₹{order}</p>
+              </div>
+              <button onClick={() => setShowOffers(false)} className="rounded-xl bg-secondary p-2"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="mt-4 max-h-[55vh] space-y-2 overflow-y-auto">
+              {offers.map((o) => {
+                const d = calcDiscount(o, order);
+                const eligible = d > 0;
+                const isApplied = appliedId === o.id;
+                return (
+                  <div
+                    key={o.id}
+                    className={`rounded-2xl border-2 p-3 ${isApplied ? "border-success bg-success/10" : eligible ? "border-border bg-card" : "border-border bg-secondary/50 opacity-60"}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${o.type === "auto" ? "bg-warning/20 text-warning" : "bg-primary-soft text-primary"}`}>
+                        {o.type === "auto" ? <Zap className="h-5 w-5" /> : <Ticket className="h-5 w-5" />}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold">{o.title}</span>
+                          <span className={`rounded-md px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide ${o.type === "auto" ? "bg-warning/20 text-warning" : "bg-primary-soft text-primary"}`}>
+                            {o.type === "auto" ? "Auto Apply" : "Coupon"}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">{o.desc}</div>
+                        <div className="mt-1 inline-block rounded-md border border-dashed border-primary/40 px-2 py-0.5 text-[11px] font-bold tracking-wider text-primary">
+                          {o.code}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 space-y-1 rounded-xl bg-secondary p-2.5 text-[11px]">
+                      <div className="flex justify-between"><span className="text-muted-foreground">Order Amount</span><span className="font-bold">₹{order}</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span className="font-bold text-success">− ₹{d}</span></div>
+                      <div className="flex justify-between border-t border-border pt-1"><span className="text-muted-foreground">Final Payable</span><span className="font-extrabold">₹{Math.max(order - d, 0)}</span></div>
+                    </div>
+
+                    <button
+                      disabled={!eligible}
+                      onClick={() => { setAppliedId(isApplied ? null : o.id); if (!isApplied) setShowOffers(false); }}
+                      className={`mt-2 w-full rounded-xl py-2.5 text-xs font-bold disabled:opacity-50 ${isApplied ? "bg-secondary text-foreground" : "bg-gradient-primary text-primary-foreground"}`}
+                    >
+                      {!eligible ? `Min order ₹${o.minOrder}` : isApplied ? "Remove" : "Apply Offer"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button onClick={() => setShowOffers(false)} className="mt-4 w-full rounded-2xl border border-border py-3 font-bold text-muted-foreground safe-bottom">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
