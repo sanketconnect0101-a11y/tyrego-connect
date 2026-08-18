@@ -212,10 +212,12 @@ function Payment() {
               </div>
               <h2 className="mt-5 text-2xl font-extrabold">Payment Received!</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                ₹{amount} collected via {METHODS.find(m => m.id === method)?.label}
+                ₹{payable} collected via {METHODS.find(m => m.id === method)?.label}
               </p>
               <div className="mt-5 w-full rounded-2xl bg-primary-soft p-4 text-left">
-                <Row label="Amount" value={`₹${amount}`} />
+                <Row label="Order Amount" value={`₹${order}`} />
+                {discount > 0 && <Row label={`Discount (${applied?.code})`} value={`− ₹${discount}`} />}
+                <Row label="Final Payable" value={`₹${payable}`} />
                 <Row label="Method" value={METHODS.find(m => m.id === method)?.label ?? ""} />
                 <Row label="Status" value="✅ Successful" />
               </div>
