@@ -82,7 +82,59 @@ function Payment() {
             />
           </div>
           <div className="mt-2 text-xs text-white/70">Tap amount to edit</div>
+          {discount > 0 && (
+            <div className="mt-3 space-y-1 rounded-2xl bg-white/15 p-3 text-xs">
+              <div className="flex justify-between"><span className="text-white/80">Order Amount</span><span className="font-bold">₹{order}</span></div>
+              <div className="flex justify-between"><span className="text-white/80">Discount ({applied?.code})</span><span className="font-bold">− ₹{discount}</span></div>
+              <div className="flex justify-between border-t border-white/25 pt-1 text-sm"><span className="font-bold">Final Payable</span><span className="font-extrabold">₹{payable}</span></div>
+            </div>
+          )}
         </div>
+
+        {/* Offers */}
+        <div>
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Eligible Offers</div>
+            {offers.length > 0 && (
+              <button onClick={() => setShowOffers(true)} className="text-xs font-bold text-primary">
+                View all ({offers.length})
+              </button>
+            )}
+          </div>
+
+          {loadingOffers ? (
+            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" /> Fetching offers…
+            </div>
+          ) : applied ? (
+            <div className="mt-3 flex items-center gap-3 rounded-2xl border-2 border-success/40 bg-success/10 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success text-success-foreground">
+                <Tag className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-bold">{applied.title}</div>
+                <div className="text-[11px] text-muted-foreground">
+                  {applied.code} • ₹{discount} saved {applied.type === "auto" ? "(auto applied)" : ""}
+                </div>
+              </div>
+              <button onClick={() => setAppliedId(null)} className="rounded-lg bg-card p-1.5 text-muted-foreground">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowOffers(true)}
+              className="mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-primary/40 bg-primary-soft p-4 text-left"
+            >
+              <Ticket className="h-5 w-5 text-primary" />
+              <div className="flex-1">
+                <div className="text-sm font-bold text-primary">Apply Coupon</div>
+                <div className="text-[11px] text-muted-foreground">{offers.length} offers available for this job</div>
+              </div>
+            </button>
+          )}
+        </div>
+
 
         {/* Method */}
         <div>
