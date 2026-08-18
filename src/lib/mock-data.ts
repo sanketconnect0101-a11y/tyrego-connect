@@ -131,3 +131,22 @@ export const serviceTypes = [
   { id: "wheel", label: "Wheel Change", icon: "⚙️", desc: "Wheel swap & balancing" },
   { id: "battery", label: "Battery Support", icon: "🔋", desc: "Jump-start & replacement" },
 ];
+
+export type Offer = {
+  id: string;
+  title: string;
+  desc: string;
+  code: string;
+  type: "auto" | "coupon";
+  discountType: "flat" | "percent";
+  value: number;
+  maxDiscount?: number;
+  minOrder: number;
+};
+
+export const eligibleOffers: Offer[] = [
+  { id: "OF1", title: "Instant ₹30 Off", desc: "Auto applied on all roadside jobs", code: "AUTO30", type: "auto", discountType: "flat", value: 30, minOrder: 100 },
+  { id: "OF2", title: "10% Off up to ₹100", desc: "UPI payments par extra bachat", code: "UPI10", type: "coupon", discountType: "percent", value: 10, maxDiscount: 100, minOrder: 200 },
+  { id: "OF3", title: "Flat ₹150 Off", desc: "Tow van & breakdown jobs ke liye", code: "TOW150", type: "coupon", discountType: "flat", value: 150, minOrder: 1000 },
+  { id: "OF4", title: "First Service ₹50 Off", desc: "New customer welcome offer", code: "FIRST50", type: "coupon", discountType: "flat", value: 50, minOrder: 150 },
+];
