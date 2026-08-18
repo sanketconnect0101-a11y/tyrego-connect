@@ -31,6 +31,8 @@ function Payment() {
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [appliedId, setAppliedId] = useState<string | null>(null);
   const [showOffers, setShowOffers] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
 
   // Fetch eligible offers (API)
   useEffect(() => {
@@ -54,6 +56,18 @@ function Payment() {
   useEffect(() => {
     if (applied && order < applied.minOrder) setAppliedId(null);
   }, [order, applied]);
+
+  const applyCode = () => {
+    const code = codeInput.trim().toUpperCase();
+    if (!code) return;
+    const found = offers.find((o) => o.code.toUpperCase() === code);
+    if (!found) return setCodeError("Invalid coupon code");
+    if (calcDiscount(found, order) <= 0) return setCodeError(`Min order ₹${found.minOrder} required`);
+    setAppliedId(found.id);
+    setCodeError(null);
+    setCodeInput("");
+    setShowOffers(false);
+  };
 
   const startCollect = () => {
     if (!method) return;
@@ -132,6 +146,30 @@ function Payment() {
                 <div className="text-[11px] text-muted-foreground">{offers.length} offers available for this job</div>
               </div>
             </button>
+          )}
+
+          {/* Manual code entry */}
+          {!applied && !loadingOffers && (
+            <div className="mt-2">
+              <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2">
+                <Ticket className="ml-1 h-4 w-4 text-muted-foreground" />
+                <input
+                  value={codeInput}
+                  onChange={(e) => { setCodeInput(e.target.value.toUpperCase()); setCodeError(null); }}
+                  onKeyDown={(e) => e.key === "Enter" && applyCode()}
+                  placeholder="Enter coupon code"
+                  className="min-w-0 flex-1 bg-transparent text-sm font-bold uppercase tracking-wider outline-none placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground"
+                />
+                <button
+                  onClick={applyCode}
+                  disabled={!codeInput.trim()}
+                  className="rounded-xl bg-gradient-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-40"
+                >
+                  Apply
+                </button>
+              </div>
+              {codeError && <div className="mt-1 px-1 text-[11px] font-bold text-destructive">{codeError}</div>}
+            </div>
           )}
         </div>
 
@@ -246,7 +284,28 @@ function Payment() {
               <button onClick={() => setShowOffers(false)} className="rounded-xl bg-secondary p-2"><X className="h-4 w-4" /></button>
             </div>
 
-            <div className="mt-4 max-h-[55vh] space-y-2 overflow-y-auto">
+            <div className="mt-4">
+              <div className="flex items-center gap-2 rounded-2xl border-2 border-dashed border-primary/40 bg-primary-soft p-2">
+                <Ticket className="ml-1 h-4 w-4 text-primary" />
+                <input
+                  value={codeInput}
+                  onChange={(e) => { setCodeInput(e.target.value.toUpperCase()); setCodeError(null); }}
+                  onKeyDown={(e) => e.key === "Enter" && applyCode()}
+                  placeholder="Have a code? Enter here"
+                  className="min-w-0 flex-1 bg-transparent text-sm font-bold uppercase tracking-wider outline-none placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground"
+                />
+                <button
+                  onClick={applyCode}
+                  disabled={!codeInput.trim()}
+                  className="rounded-xl bg-gradient-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-40"
+                >
+                  Apply
+                </button>
+              </div>
+              {codeError && <div className="mt-1 px-1 text-[11px] font-bold text-destructive">{codeError}</div>}
+            </div>
+
+            <div className="mt-3 max-h-[50vh] space-y-2 overflow-y-auto">
               {offers.map((o) => {
                 const d = calcDiscount(o, order);
                 const eligible = d > 0;
