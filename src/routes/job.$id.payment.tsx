@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
-import { Banknote, Smartphone, CreditCard, Check, IndianRupee } from "lucide-react";
+import { eligibleOffers, type Offer } from "@/lib/mock-data";
+import { Banknote, Smartphone, CreditCard, Check, IndianRupee, Tag, Zap, Ticket, X, Loader2 } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/payment")({ component: Payment });
 
@@ -11,12 +12,48 @@ const METHODS = [
   { id: "card", label: "Card", icon: CreditCard, desc: "Debit / Credit" },
 ];
 
+function calcDiscount(o: Offer, order: number) {
+  if (order < o.minOrder) return 0;
+  const raw = o.discountType === "flat" ? o.value : (order * o.value) / 100;
+  return Math.floor(Math.min(raw, o.maxDiscount ?? raw));
+}
+
 function Payment() {
   const { id } = Route.useParams();
   const [method, setMethod] = useState<string | null>(null);
   const [amount, setAmount] = useState("250");
   const [collecting, setCollecting] = useState(false);
   const [done, setDone] = useState(false);
+
+  const order = parseInt(amount || "0", 10) || 0;
+
+  const [offers, setOffers] = useState<Offer[]>([]);
+  const [loadingOffers, setLoadingOffers] = useState(true);
+  const [appliedId, setAppliedId] = useState<string | null>(null);
+  const [showOffers, setShowOffers] = useState(false);
+
+  // Fetch eligible offers (API)
+  useEffect(() => {
+    let alive = true;
+    setLoadingOffers(true);
+    const t = setTimeout(() => {
+      if (!alive) return;
+      setOffers(eligibleOffers);
+      setLoadingOffers(false);
+      const auto = eligibleOffers.find((o) => o.type === "auto");
+      if (auto) setAppliedId(auto.id);
+    }, 900);
+    return () => { alive = false; clearTimeout(t); };
+  }, []);
+
+  const applied = offers.find((o) => o.id === appliedId) ?? null;
+  const discount = useMemo(() => (applied ? calcDiscount(applied, order) : 0), [applied, order]);
+  const payable = Math.max(order - discount, 0);
+
+  // Drop offer if it becomes ineligible after amount edit
+  useEffect(() => {
+    if (applied && order < applied.minOrder) setAppliedId(null);
+  }, [order, applied]);
 
   const startCollect = () => {
     if (!method) return;
@@ -26,6 +63,7 @@ function Payment() {
       setDone(true);
     }, 2200);
   };
+
 
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col bg-background">
@@ -44,7 +82,59 @@ function Payment() {
             />
           </div>
           <div className="mt-2 text-xs text-white/70">Tap amount to edit</div>
+          {discount > 0 && (
+            <div className="mt-3 space-y-1 rounded-2xl bg-white/15 p-3 text-xs">
+              <div className="flex justify-between"><span className="text-white/80">Order Amount</span><span className="font-bold">₹{order}</span></div>
+              <div className="flex justify-between"><span className="text-white/80">Discount ({applied?.code})</span><span className="font-bold">− ₹{discount}</span></div>
+              <div className="flex justify-between border-t border-white/25 pt-1 text-sm"><span className="font-bold">Final Payable</span><span className="font-extrabold">₹{payable}</span></div>
+            </div>
+          )}
         </div>
+
+        {/* Offers */}
+        <div>
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Eligible Offers</div>
+            {offers.length > 0 && (
+              <button onClick={() => setShowOffers(true)} className="text-xs font-bold text-primary">
+                View all ({offers.length})
+              </button>
+            )}
+          </div>
+
+          {loadingOffers ? (
+            <div className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin text-primary" /> Fetching offers…
+            </div>
+          ) : applied ? (
+            <div className="mt-3 flex items-center gap-3 rounded-2xl border-2 border-success/40 bg-success/10 p-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success text-success-foreground">
+                <Tag className="h-5 w-5" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="text-sm font-bold">{applied.title}</div>
+                <div className="text-[11px] text-muted-foreground">
+                  {applied.code} • ₹{discount} saved {applied.type === "auto" ? "(auto applied)" : ""}
+                </div>
+              </div>
+              <button onClick={() => setAppliedId(null)} className="rounded-lg bg-card p-1.5 text-muted-foreground">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setShowOffers(true)}
+              className="mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-primary/40 bg-primary-soft p-4 text-left"
+            >
+              <Ticket className="h-5 w-5 text-primary" />
+              <div className="flex-1">
+                <div className="text-sm font-bold text-primary">Apply Coupon</div>
+                <div className="text-[11px] text-muted-foreground">{offers.length} offers available for this job</div>
+              </div>
+            </button>
+          )}
+        </div>
+
 
         {/* Method */}
         <div>
@@ -87,7 +177,7 @@ function Payment() {
           disabled={!method}
           className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated disabled:opacity-50"
         >
-          {method ? `Collect ₹${amount} via ${METHODS.find(m => m.id === method)?.label}` : "Select a method"}
+          {method ? `Collect ₹${payable} via ${METHODS.find(m => m.id === method)?.label}` : "Select a method"}
         </button>
       </div>
 
@@ -122,10 +212,12 @@ function Payment() {
               </div>
               <h2 className="mt-5 text-2xl font-extrabold">Payment Received!</h2>
               <p className="mt-1 text-sm text-muted-foreground">
-                ₹{amount} collected via {METHODS.find(m => m.id === method)?.label}
+                ₹{payable} collected via {METHODS.find(m => m.id === method)?.label}
               </p>
               <div className="mt-5 w-full rounded-2xl bg-primary-soft p-4 text-left">
-                <Row label="Amount" value={`₹${amount}`} />
+                <Row label="Order Amount" value={`₹${order}`} />
+                {discount > 0 && <Row label={`Discount (${applied?.code})`} value={`− ₹${discount}`} />}
+                <Row label="Final Payable" value={`₹${payable}`} />
                 <Row label="Method" value={METHODS.find(m => m.id === method)?.label ?? ""} />
                 <Row label="Status" value="✅ Successful" />
               </div>
@@ -140,9 +232,74 @@ function Payment() {
           </div>
         </div>
       )}
+
+      {/* Offers sheet */}
+      {showOffers && (
+        <div className="fixed inset-0 z-50 flex items-end bg-foreground/40 backdrop-blur-sm">
+          <div className="mx-auto w-full max-w-md animate-sheet-up rounded-t-3xl bg-card p-5 shadow-sheet">
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-border" />
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold">Eligible Offers</h3>
+                <p className="text-xs text-muted-foreground">Order amount ₹{order}</p>
+              </div>
+              <button onClick={() => setShowOffers(false)} className="rounded-xl bg-secondary p-2"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="mt-4 max-h-[55vh] space-y-2 overflow-y-auto">
+              {offers.map((o) => {
+                const d = calcDiscount(o, order);
+                const eligible = d > 0;
+                const isApplied = appliedId === o.id;
+                return (
+                  <div
+                    key={o.id}
+                    className={`rounded-2xl border-2 p-3 ${isApplied ? "border-success bg-success/10" : eligible ? "border-border bg-card" : "border-border bg-secondary/50 opacity-60"}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${o.type === "auto" ? "bg-warning/20 text-warning" : "bg-primary-soft text-primary"}`}>
+                        {o.type === "auto" ? <Zap className="h-5 w-5" /> : <Ticket className="h-5 w-5" />}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold">{o.title}</span>
+                          <span className={`rounded-md px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-wide ${o.type === "auto" ? "bg-warning/20 text-warning" : "bg-primary-soft text-primary"}`}>
+                            {o.type === "auto" ? "Auto Apply" : "Coupon"}
+                          </span>
+                        </div>
+                        <div className="text-[11px] text-muted-foreground">{o.desc}</div>
+                        <div className="mt-1 inline-block rounded-md border border-dashed border-primary/40 px-2 py-0.5 text-[11px] font-bold tracking-wider text-primary">
+                          {o.code}
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-3 space-y-1 rounded-xl bg-secondary p-2.5 text-[11px]">
+                      <div className="flex justify-between"><span className="text-muted-foreground">Order Amount</span><span className="font-bold">₹{order}</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Discount</span><span className="font-bold text-success">− ₹{d}</span></div>
+                      <div className="flex justify-between border-t border-border pt-1"><span className="text-muted-foreground">Final Payable</span><span className="font-extrabold">₹{Math.max(order - d, 0)}</span></div>
+                    </div>
+
+                    <button
+                      disabled={!eligible}
+                      onClick={() => { setAppliedId(isApplied ? null : o.id); if (!isApplied) setShowOffers(false); }}
+                      className={`mt-2 w-full rounded-xl py-2.5 text-xs font-bold disabled:opacity-50 ${isApplied ? "bg-secondary text-foreground" : "bg-gradient-primary text-primary-foreground"}`}
+                    >
+                      {!eligible ? `Min order ₹${o.minOrder}` : isApplied ? "Remove" : "Apply Offer"}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+
+            <button onClick={() => setShowOffers(false)} className="mt-4 w-full rounded-2xl border border-border py-3 font-bold text-muted-foreground safe-bottom">Close</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
+
 
 function Row({ label, value }: { label: string; value: string }) {
   return (
