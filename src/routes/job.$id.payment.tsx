@@ -177,7 +177,7 @@ function Payment() {
           disabled={!method}
           className="flex w-full items-center justify-center rounded-2xl bg-gradient-primary py-4 font-bold text-primary-foreground shadow-elevated disabled:opacity-50"
         >
-          {method ? `Collect ₹${amount} via ${METHODS.find(m => m.id === method)?.label}` : "Select a method"}
+          {method ? `Collect ₹${payable} via ${METHODS.find(m => m.id === method)?.label}` : "Select a method"}
         </button>
       </div>
 
