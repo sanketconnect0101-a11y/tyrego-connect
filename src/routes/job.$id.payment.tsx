@@ -188,6 +188,80 @@ function Payment() {
           )}
         </div>
 
+        {/* Merchant instant discount */}
+        <div>
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Instant Discount (by you)</div>
+            <button
+              onClick={() => { setManualOn(!manualOn); if (manualOn) setManualValue(""); }}
+              className={`rounded-full px-3 py-1 text-[11px] font-bold ${manualOn ? "bg-success text-success-foreground" : "bg-secondary text-muted-foreground"}`}
+            >
+              {manualOn ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          {!manualOn ? (
+            <button
+              onClick={() => setManualOn(true)}
+              className="mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-warning/50 bg-warning/10 p-4 text-left"
+            >
+              <Percent className="h-5 w-5 text-warning" />
+              <div className="flex-1">
+                <div className="text-sm font-bold">Give Instant Discount</div>
+                <div className="text-[11px] text-muted-foreground">Coupon na ho to khud se ₹ ya % chhoot dein</div>
+              </div>
+            </button>
+          ) : (
+            <div className="mt-3 space-y-3 rounded-2xl border border-border bg-card p-3">
+              <div className="flex rounded-xl bg-secondary p-1">
+                {(["flat", "percent"] as const).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setManualMode(m)}
+                    className={`flex-1 rounded-lg py-2 text-xs font-bold ${manualMode === m ? "bg-card shadow-sm" : "text-muted-foreground"}`}
+                  >
+                    {m === "flat" ? "₹ Amount" : "% Percent"}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2 rounded-xl border border-border px-3">
+                <span className="text-sm font-bold text-muted-foreground">{manualMode === "flat" ? "₹" : "%"}</span>
+                <input
+                  value={manualValue}
+                  onChange={(e) => setManualValue(e.target.value.replace(/\D/g, "").slice(0, manualMode === "percent" ? 3 : 6))}
+                  inputMode="numeric"
+                  placeholder="0"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-lg font-extrabold outline-none"
+                />
+                {manualValue && (
+                  <span className="text-xs font-bold text-success">− ₹{manualDiscount}</span>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {(manualMode === "flat" ? [20, 50, 100] : [5, 10, 20]).map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setManualValue(String(q))}
+                    className="rounded-lg bg-primary-soft px-3 py-1.5 text-[11px] font-bold text-primary"
+                  >
+                    {manualMode === "flat" ? `₹${q}` : `${q}%`}
+                  </button>
+                ))}
+                <button
+                  onClick={() => { setManualOn(false); setManualValue(""); }}
+                  className="ml-auto rounded-lg bg-secondary px-3 py-1.5 text-[11px] font-bold text-muted-foreground"
+                >
+                  Remove
+                </button>
+              </div>
+              {manualMode === "percent" && parseInt(manualValue || "0", 10) > 100 && (
+                <div className="text-[11px] font-bold text-destructive">Max 100%</div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Method */}
         <div>
