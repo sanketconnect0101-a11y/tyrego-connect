@@ -48,8 +48,22 @@ function Payment() {
     return () => { alive = false; clearTimeout(t); };
   }, []);
 
+  // Merchant instant discount
+  const [manualMode, setManualMode] = useState<"flat" | "percent">("flat");
+  const [manualValue, setManualValue] = useState("");
+  const [manualOn, setManualOn] = useState(false);
+
   const applied = offers.find((o) => o.id === appliedId) ?? null;
-  const discount = useMemo(() => (applied ? calcDiscount(applied, order) : 0), [applied, order]);
+  const offerDiscount = useMemo(() => (applied ? calcDiscount(applied, order) : 0), [applied, order]);
+
+  const manualDiscount = useMemo(() => {
+    if (!manualOn) return 0;
+    const v = parseInt(manualValue || "0", 10) || 0;
+    const raw = manualMode === "flat" ? v : (order * Math.min(v, 100)) / 100;
+    return Math.max(Math.min(Math.floor(raw), Math.max(order - offerDiscount, 0)), 0);
+  }, [manualOn, manualValue, manualMode, order, offerDiscount]);
+
+  const discount = offerDiscount + manualDiscount;
   const payable = Math.max(order - discount, 0);
 
   // Drop offer if it becomes ineligible after amount edit
