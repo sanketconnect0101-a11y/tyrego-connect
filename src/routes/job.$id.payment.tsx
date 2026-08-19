@@ -151,29 +151,6 @@ function Payment() {
             </button>
           )}
 
-          {/* Manual code entry */}
-          {!applied && !loadingOffers && (
-            <div className="mt-2">
-              <div className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2">
-                <Ticket className="ml-1 h-4 w-4 text-muted-foreground" />
-                <input
-                  value={codeInput}
-                  onChange={(e) => { setCodeInput(e.target.value.toUpperCase()); setCodeError(null); }}
-                  onKeyDown={(e) => e.key === "Enter" && applyCode()}
-                  placeholder="Enter coupon code"
-                  className="min-w-0 flex-1 bg-transparent text-sm font-bold uppercase tracking-wider outline-none placeholder:font-normal placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-foreground"
-                />
-                <button
-                  onClick={applyCode}
-                  disabled={!codeInput.trim()}
-                  className="rounded-xl bg-gradient-primary px-4 py-2 text-xs font-bold text-primary-foreground disabled:opacity-40"
-                >
-                  Apply
-                </button>
-              </div>
-              {codeError && <div className="mt-1 px-1 text-[11px] font-bold text-destructive">{codeError}</div>}
-            </div>
-          )}
         </div>
 
         {/* Merchant instant discount */}
