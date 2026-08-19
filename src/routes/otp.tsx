@@ -59,6 +59,10 @@ function Otp() {
 
         <button
           onClick={() => {
+            try {
+              localStorage.removeItem("autoxpert_kyc_pending");
+              localStorage.setItem("autoxpert_kyc_done", "1");
+            } catch {}
             navigate({ to: "/home" });
           }}
           disabled={!complete}
