@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
 import { eligibleOffers, type Offer } from "@/lib/mock-data";
-import { Banknote, Smartphone, CreditCard, Check, IndianRupee, Tag, Zap, Ticket, X, Loader2 } from "lucide-react";
+import { Banknote, Smartphone, CreditCard, Check, IndianRupee, Tag, Zap, Ticket, X, Loader2, Percent } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/payment")({ component: Payment });
 
@@ -48,8 +48,22 @@ function Payment() {
     return () => { alive = false; clearTimeout(t); };
   }, []);
 
+  // Merchant instant discount
+  const [manualMode, setManualMode] = useState<"flat" | "percent">("flat");
+  const [manualValue, setManualValue] = useState("");
+  const [manualOn, setManualOn] = useState(false);
+
   const applied = offers.find((o) => o.id === appliedId) ?? null;
-  const discount = useMemo(() => (applied ? calcDiscount(applied, order) : 0), [applied, order]);
+  const offerDiscount = useMemo(() => (applied ? calcDiscount(applied, order) : 0), [applied, order]);
+
+  const manualDiscount = useMemo(() => {
+    if (!manualOn) return 0;
+    const v = parseInt(manualValue || "0", 10) || 0;
+    const raw = manualMode === "flat" ? v : (order * Math.min(v, 100)) / 100;
+    return Math.max(Math.min(Math.floor(raw), Math.max(order - offerDiscount, 0)), 0);
+  }, [manualOn, manualValue, manualMode, order, offerDiscount]);
+
+  const discount = offerDiscount + manualDiscount;
   const payable = Math.max(order - discount, 0);
 
   // Drop offer if it becomes ineligible after amount edit
@@ -99,7 +113,8 @@ function Payment() {
           {discount > 0 && (
             <div className="mt-3 space-y-1 rounded-2xl bg-white/15 p-3 text-xs">
               <div className="flex justify-between"><span className="text-white/80">Order Amount</span><span className="font-bold">₹{order}</span></div>
-              <div className="flex justify-between"><span className="text-white/80">Discount ({applied?.code})</span><span className="font-bold">− ₹{discount}</span></div>
+              {offerDiscount > 0 && <div className="flex justify-between"><span className="text-white/80">Offer ({applied?.code})</span><span className="font-bold">− ₹{offerDiscount}</span></div>}
+              {manualDiscount > 0 && <div className="flex justify-between"><span className="text-white/80">Instant Discount{manualMode === "percent" ? ` (${manualValue}%)` : ""}</span><span className="font-bold">− ₹{manualDiscount}</span></div>}
               <div className="flex justify-between border-t border-white/25 pt-1 text-sm"><span className="font-bold">Final Payable</span><span className="font-extrabold">₹{payable}</span></div>
             </div>
           )}
@@ -173,6 +188,80 @@ function Payment() {
           )}
         </div>
 
+        {/* Merchant instant discount */}
+        <div>
+          <div className="flex items-center justify-between">
+            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Instant Discount (by you)</div>
+            <button
+              onClick={() => { setManualOn(!manualOn); if (manualOn) setManualValue(""); }}
+              className={`rounded-full px-3 py-1 text-[11px] font-bold ${manualOn ? "bg-success text-success-foreground" : "bg-secondary text-muted-foreground"}`}
+            >
+              {manualOn ? "ON" : "OFF"}
+            </button>
+          </div>
+
+          {!manualOn ? (
+            <button
+              onClick={() => setManualOn(true)}
+              className="mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-warning/50 bg-warning/10 p-4 text-left"
+            >
+              <Percent className="h-5 w-5 text-warning" />
+              <div className="flex-1">
+                <div className="text-sm font-bold">Give Instant Discount</div>
+                <div className="text-[11px] text-muted-foreground">Coupon na ho to khud se ₹ ya % chhoot dein</div>
+              </div>
+            </button>
+          ) : (
+            <div className="mt-3 space-y-3 rounded-2xl border border-border bg-card p-3">
+              <div className="flex rounded-xl bg-secondary p-1">
+                {(["flat", "percent"] as const).map((m) => (
+                  <button
+                    key={m}
+                    onClick={() => setManualMode(m)}
+                    className={`flex-1 rounded-lg py-2 text-xs font-bold ${manualMode === m ? "bg-card shadow-sm" : "text-muted-foreground"}`}
+                  >
+                    {m === "flat" ? "₹ Amount" : "% Percent"}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2 rounded-xl border border-border px-3">
+                <span className="text-sm font-bold text-muted-foreground">{manualMode === "flat" ? "₹" : "%"}</span>
+                <input
+                  value={manualValue}
+                  onChange={(e) => setManualValue(e.target.value.replace(/\D/g, "").slice(0, manualMode === "percent" ? 3 : 6))}
+                  inputMode="numeric"
+                  placeholder="0"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-lg font-extrabold outline-none"
+                />
+                {manualValue && (
+                  <span className="text-xs font-bold text-success">− ₹{manualDiscount}</span>
+                )}
+              </div>
+
+              <div className="flex flex-wrap gap-2">
+                {(manualMode === "flat" ? [20, 50, 100] : [5, 10, 20]).map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => setManualValue(String(q))}
+                    className="rounded-lg bg-primary-soft px-3 py-1.5 text-[11px] font-bold text-primary"
+                  >
+                    {manualMode === "flat" ? `₹${q}` : `${q}%`}
+                  </button>
+                ))}
+                <button
+                  onClick={() => { setManualOn(false); setManualValue(""); }}
+                  className="ml-auto rounded-lg bg-secondary px-3 py-1.5 text-[11px] font-bold text-muted-foreground"
+                >
+                  Remove
+                </button>
+              </div>
+              {manualMode === "percent" && parseInt(manualValue || "0", 10) > 100 && (
+                <div className="text-[11px] font-bold text-destructive">Max 100%</div>
+              )}
+            </div>
+          )}
+        </div>
 
         {/* Method */}
         <div>
@@ -254,7 +343,8 @@ function Payment() {
               </p>
               <div className="mt-5 w-full rounded-2xl bg-primary-soft p-4 text-left">
                 <Row label="Order Amount" value={`₹${order}`} />
-                {discount > 0 && <Row label={`Discount (${applied?.code})`} value={`− ₹${discount}`} />}
+                {offerDiscount > 0 && <Row label={`Offer (${applied?.code})`} value={`− ₹${offerDiscount}`} />}
+                {manualDiscount > 0 && <Row label="Instant Discount" value={`− ₹${manualDiscount}`} />}
                 <Row label="Final Payable" value={`₹${payable}`} />
                 <Row label="Method" value={METHODS.find(m => m.id === method)?.label ?? ""} />
                 <Row label="Status" value="✅ Successful" />
