@@ -113,7 +113,8 @@ function Payment() {
           {discount > 0 && (
             <div className="mt-3 space-y-1 rounded-2xl bg-white/15 p-3 text-xs">
               <div className="flex justify-between"><span className="text-white/80">Order Amount</span><span className="font-bold">₹{order}</span></div>
-              <div className="flex justify-between"><span className="text-white/80">Discount ({applied?.code})</span><span className="font-bold">− ₹{discount}</span></div>
+              {offerDiscount > 0 && <div className="flex justify-between"><span className="text-white/80">Offer ({applied?.code})</span><span className="font-bold">− ₹{offerDiscount}</span></div>}
+              {manualDiscount > 0 && <div className="flex justify-between"><span className="text-white/80">Instant Discount{manualMode === "percent" ? ` (${manualValue}%)` : ""}</span><span className="font-bold">− ₹{manualDiscount}</span></div>}
               <div className="flex justify-between border-t border-white/25 pt-1 text-sm"><span className="font-bold">Final Payable</span><span className="font-extrabold">₹{payable}</span></div>
             </div>
           )}
