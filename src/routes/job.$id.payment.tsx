@@ -31,8 +31,7 @@ function Payment() {
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [appliedId, setAppliedId] = useState<string | null>(null);
   const [showOffers, setShowOffers] = useState(false);
-  const [codeInput, setCodeInput] = useState("");
-  const [codeError, setCodeError] = useState<string | null>(null);
+
 
   // Fetch eligible offers (API)
   useEffect(() => {
