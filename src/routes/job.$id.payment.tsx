@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ScreenHeader } from "@/components/MobileShell";
 import { eligibleOffers, type Offer } from "@/lib/mock-data";
-import { Banknote, Smartphone, CreditCard, Check, IndianRupee, Tag, Zap, Ticket, X, Loader2 } from "lucide-react";
+import { Banknote, Smartphone, CreditCard, Check, IndianRupee, Tag, Zap, Ticket, X, Loader2, Percent } from "lucide-react";
 
 export const Route = createFileRoute("/job/$id/payment")({ component: Payment });
 
