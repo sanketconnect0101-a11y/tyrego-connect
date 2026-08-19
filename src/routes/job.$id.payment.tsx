@@ -343,7 +343,8 @@ function Payment() {
               </p>
               <div className="mt-5 w-full rounded-2xl bg-primary-soft p-4 text-left">
                 <Row label="Order Amount" value={`₹${order}`} />
-                {discount > 0 && <Row label={`Discount (${applied?.code})`} value={`− ₹${discount}`} />}
+                {offerDiscount > 0 && <Row label={`Offer (${applied?.code})`} value={`− ₹${offerDiscount}`} />}
+                {manualDiscount > 0 && <Row label="Instant Discount" value={`− ₹${manualDiscount}`} />}
                 <Row label="Final Payable" value={`₹${payable}`} />
                 <Row label="Method" value={METHODS.find(m => m.id === method)?.label ?? ""} />
                 <Row label="Status" value="✅ Successful" />
