@@ -31,6 +31,9 @@ function Payment() {
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [appliedId, setAppliedId] = useState<string | null>(null);
   const [showOffers, setShowOffers] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+
 
 
   // Fetch eligible offers (API)
@@ -78,6 +81,18 @@ function Payment() {
       setCollecting(false);
       setDone(true);
     }, 2200);
+  };
+  const applyCode = () => {
+    const code = codeInput.trim().toUpperCase();
+    setCodeError(null);
+    if (!code) return;
+    const match = offers.find((o) => o.code.toUpperCase() === code);
+    if (!match) { setCodeError("Invalid coupon code"); return; }
+    const d = calcDiscount(match, order);
+    if (d <= 0) { setCodeError(`Minimum order ₹${match.minOrder}`); return; }
+    setAppliedId(match.id);
+    setShowOffers(false);
+    setCodeInput("");
   };
 
 
@@ -339,8 +354,28 @@ function Payment() {
               <button onClick={() => setShowOffers(false)} className="rounded-xl bg-secondary p-2"><X className="h-4 w-4" /></button>
             </div>
 
+            {/* Coupon code input */}
+            <div className="mt-3 space-y-2 rounded-2xl border border-border bg-card p-3">
+              <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Have a coupon code?</div>
+              <div className="flex gap-2">
+                <input
+                  value={codeInput}
+                  onChange={(e) => { setCodeInput(e.target.value.toUpperCase()); setCodeError(null); }}
+                  placeholder="ENTER CODE"
+                  className="min-w-0 flex-1 rounded-xl border border-border bg-secondary px-3 py-2.5 text-sm font-bold uppercase tracking-wider outline-none focus:border-primary"
+                />
+                <button
+                  onClick={applyCode}
+                  className="rounded-xl bg-gradient-primary px-4 py-2 text-sm font-bold text-primary-foreground shadow-sm"
+                >
+                  Apply
+                </button>
+              </div>
+              {codeError && <div className="text-xs font-bold text-destructive">{codeError}</div>}
+            </div>
 
             <div className="mt-3 max-h-[50vh] space-y-2 overflow-y-auto">
+
               {offers.map((o) => {
                 const d = calcDiscount(o, order);
                 const eligible = d > 0;
