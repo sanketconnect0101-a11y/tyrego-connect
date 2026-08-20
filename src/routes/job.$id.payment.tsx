@@ -374,7 +374,79 @@ function Payment() {
           </div>
         </div>
       )}
+
+      {/* Instant discount sheet */}
+      {showManual && (
+        <div className="fixed inset-0 z-50 flex items-end bg-foreground/40 backdrop-blur-sm">
+          <div className="mx-auto w-full max-w-md animate-sheet-up rounded-t-3xl bg-card p-5 shadow-sheet">
+            <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-border" />
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-bold">Instant Discount</h3>
+                <p className="text-xs text-muted-foreground">Khud se ₹ ya % chhoot dein</p>
+              </div>
+              <button onClick={() => setShowManual(false)} className="rounded-xl bg-secondary p-2"><X className="h-4 w-4" /></button>
+            </div>
+
+            <div className="mt-4 flex rounded-xl bg-secondary p-1">
+              {(["flat", "percent"] as const).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setManualMode(m)}
+                  className={`flex-1 rounded-lg py-2 text-xs font-bold ${manualMode === m ? "bg-card shadow-sm" : "text-muted-foreground"}`}
+                >
+                  {m === "flat" ? "₹ Amount" : "% Percent"}
+                </button>
+              ))}
+            </div>
+
+            <div className="mt-3 flex items-center gap-2 rounded-xl border border-border px-3">
+              <span className="text-sm font-bold text-muted-foreground">{manualMode === "flat" ? "₹" : "%"}</span>
+              <input
+                value={manualValue}
+                onChange={(e) => { setManualValue(e.target.value.replace(/\D/g, "").slice(0, manualMode === "percent" ? 3 : 6)); setManualOn(true); }}
+                inputMode="numeric"
+                placeholder="0"
+                className="min-w-0 flex-1 bg-transparent py-3 text-lg font-extrabold outline-none"
+              />
+              {manualValue && <span className="text-xs font-bold text-success">− ₹{manualDiscount}</span>}
+            </div>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              {(manualMode === "flat" ? [20, 50, 100] : [5, 10, 20]).map((q) => (
+                <button
+                  key={q}
+                  onClick={() => { setManualValue(String(q)); setManualOn(true); }}
+                  className="rounded-lg bg-primary-soft px-3 py-1.5 text-[11px] font-bold text-primary"
+                >
+                  {manualMode === "flat" ? `₹${q}` : `${q}%`}
+                </button>
+              ))}
+            </div>
+
+            {manualMode === "percent" && parseInt(manualValue || "0", 10) > 100 && (
+              <div className="mt-2 text-[11px] font-bold text-destructive">Max 100%</div>
+            )}
+
+            <div className="mt-4 flex gap-2 safe-bottom">
+              <button
+                onClick={() => { setManualOn(false); setManualValue(""); setShowManual(false); }}
+                className="flex-1 rounded-2xl border border-border py-3 font-bold text-muted-foreground"
+              >
+                Remove
+              </button>
+              <button
+                onClick={() => { setManualOn(true); setShowManual(false); }}
+                className="flex-1 rounded-2xl bg-gradient-primary py-3 font-bold text-primary-foreground shadow-elevated"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
+
   );
 }
 
