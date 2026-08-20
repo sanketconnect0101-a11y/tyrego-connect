@@ -31,6 +31,9 @@ function Payment() {
   const [loadingOffers, setLoadingOffers] = useState(true);
   const [appliedId, setAppliedId] = useState<string | null>(null);
   const [showOffers, setShowOffers] = useState(false);
+  const [codeInput, setCodeInput] = useState("");
+  const [codeError, setCodeError] = useState<string | null>(null);
+
 
 
   // Fetch eligible offers (API)
@@ -78,6 +81,18 @@ function Payment() {
       setCollecting(false);
       setDone(true);
     }, 2200);
+  };
+  const applyCode = () => {
+    const code = codeInput.trim().toUpperCase();
+    setCodeError(null);
+    if (!code) return;
+    const match = offers.find((o) => o.code.toUpperCase() === code);
+    if (!match) { setCodeError("Invalid coupon code"); return; }
+    const d = calcDiscount(match, order);
+    if (d <= 0) { setCodeError(`Minimum order ₹${match.minOrder}`); return; }
+    setAppliedId(match.id);
+    setShowOffers(false);
+    setCodeInput("");
   };
 
 
