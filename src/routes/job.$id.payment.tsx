@@ -123,7 +123,7 @@ function Payment() {
           )}
         </div>
 
-        {/* Offers */}
+        {/* Offers + Instant discount */}
         <div>
           <div className="flex items-center justify-between">
             <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Eligible Offers</div>
@@ -138,110 +138,58 @@ function Payment() {
             <div className="mt-3 flex items-center gap-2 rounded-2xl border border-border bg-card p-4 text-xs text-muted-foreground">
               <Loader2 className="h-4 w-4 animate-spin text-primary" /> Fetching offers…
             </div>
-          ) : applied ? (
-            <div className="mt-3 flex items-center gap-3 rounded-2xl border-2 border-success/40 bg-success/10 p-4">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success text-success-foreground">
-                <Tag className="h-5 w-5" />
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-bold">{applied.title}</div>
-                <div className="text-[11px] text-muted-foreground">
-                  {applied.code} • ₹{discount} saved {applied.type === "auto" ? "(auto applied)" : ""}
+          ) : (
+            <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-secondary/40">
+              {applied ? (
+                <div className="flex items-center gap-3 border-b border-border p-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-success text-success-foreground">
+                    <Tag className="h-5 w-5" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-bold">{applied.title}</div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {applied.code} • ₹{offerDiscount} saved {applied.type === "auto" ? "(auto applied)" : ""}
+                    </div>
+                  </div>
+                  <button onClick={() => setAppliedId(null)} className="rounded-lg bg-card p-1.5 text-muted-foreground">
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
-              </div>
-              <button onClick={() => setAppliedId(null)} className="rounded-lg bg-card p-1.5 text-muted-foreground">
-                <X className="h-4 w-4" />
+              ) : (
+                <button
+                  onClick={() => setShowOffers(true)}
+                  className="flex w-full items-center gap-3 border-b border-border p-4 text-left active:bg-secondary"
+                >
+                  <Ticket className="h-6 w-6 text-primary" />
+                  <div className="flex-1">
+                    <div className="text-sm font-bold">Apply Coupon</div>
+                    <div className="text-[11px] text-muted-foreground">{offers.length} offers available for this job</div>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-primary" />
+                </button>
+              )}
+
+              <button
+                onClick={() => setShowManual(true)}
+                className="flex w-full items-center gap-3 p-4 text-left active:bg-secondary"
+              >
+                <Percent className="h-6 w-6 text-warning" />
+                <div className="flex-1">
+                  <div className="text-sm font-bold">Get Instant Discount</div>
+                  <div className="text-[11px] text-muted-foreground">
+                    {manualOn && manualDiscount > 0 ? `− ₹${manualDiscount} applied` : "Give extra discount"}
+                  </div>
+                </div>
+                {manualOn && manualDiscount > 0 ? (
+                  <span className="text-xs font-bold text-success">− ₹{manualDiscount}</span>
+                ) : (
+                  <ChevronRight className="h-5 w-5 text-primary" />
+                )}
               </button>
             </div>
-          ) : (
-            <button
-              onClick={() => setShowOffers(true)}
-              className="mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-primary/40 bg-primary-soft p-4 text-left"
-            >
-              <Ticket className="h-5 w-5 text-primary" />
-              <div className="flex-1">
-                <div className="text-sm font-bold text-primary">Apply Coupon</div>
-                <div className="text-[11px] text-muted-foreground">{offers.length} offers available for this job</div>
-              </div>
-            </button>
-          )}
-
-        </div>
-
-        {/* Merchant instant discount */}
-        <div>
-          <div className="flex items-center justify-between">
-            <div className="text-xs font-bold uppercase tracking-wide text-muted-foreground">Instant Discount (by you)</div>
-            <button
-              onClick={() => { setManualOn(!manualOn); if (manualOn) setManualValue(""); }}
-              className={`rounded-full px-3 py-1 text-[11px] font-bold ${manualOn ? "bg-success text-success-foreground" : "bg-secondary text-muted-foreground"}`}
-            >
-              {manualOn ? "ON" : "OFF"}
-            </button>
-          </div>
-
-          {!manualOn ? (
-            <button
-              onClick={() => setManualOn(true)}
-              className="mt-3 flex w-full items-center gap-3 rounded-2xl border-2 border-dashed border-warning/50 bg-warning/10 p-4 text-left"
-            >
-              <Percent className="h-5 w-5 text-warning" />
-              <div className="flex-1">
-                <div className="text-sm font-bold">Give Instant Discount</div>
-                <div className="text-[11px] text-muted-foreground">Coupon na ho to khud se ₹ ya % chhoot dein</div>
-              </div>
-            </button>
-          ) : (
-            <div className="mt-3 space-y-3 rounded-2xl border border-border bg-card p-3">
-              <div className="flex rounded-xl bg-secondary p-1">
-                {(["flat", "percent"] as const).map((m) => (
-                  <button
-                    key={m}
-                    onClick={() => setManualMode(m)}
-                    className={`flex-1 rounded-lg py-2 text-xs font-bold ${manualMode === m ? "bg-card shadow-sm" : "text-muted-foreground"}`}
-                  >
-                    {m === "flat" ? "₹ Amount" : "% Percent"}
-                  </button>
-                ))}
-              </div>
-
-              <div className="flex items-center gap-2 rounded-xl border border-border px-3">
-                <span className="text-sm font-bold text-muted-foreground">{manualMode === "flat" ? "₹" : "%"}</span>
-                <input
-                  value={manualValue}
-                  onChange={(e) => setManualValue(e.target.value.replace(/\D/g, "").slice(0, manualMode === "percent" ? 3 : 6))}
-                  inputMode="numeric"
-                  placeholder="0"
-                  className="min-w-0 flex-1 bg-transparent py-3 text-lg font-extrabold outline-none"
-                />
-                {manualValue && (
-                  <span className="text-xs font-bold text-success">− ₹{manualDiscount}</span>
-                )}
-              </div>
-
-              <div className="flex flex-wrap gap-2">
-                {(manualMode === "flat" ? [20, 50, 100] : [5, 10, 20]).map((q) => (
-                  <button
-                    key={q}
-                    onClick={() => setManualValue(String(q))}
-                    className="rounded-lg bg-primary-soft px-3 py-1.5 text-[11px] font-bold text-primary"
-                  >
-                    {manualMode === "flat" ? `₹${q}` : `${q}%`}
-                  </button>
-                ))}
-                <button
-                  onClick={() => { setManualOn(false); setManualValue(""); }}
-                  className="ml-auto rounded-lg bg-secondary px-3 py-1.5 text-[11px] font-bold text-muted-foreground"
-                >
-                  Remove
-                </button>
-              </div>
-              {manualMode === "percent" && parseInt(manualValue || "0", 10) > 100 && (
-                <div className="text-[11px] font-bold text-destructive">Max 100%</div>
-              )}
-            </div>
           )}
         </div>
+
 
         {/* Method */}
         <div>
